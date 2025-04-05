@@ -1,16 +1,14 @@
-// backend/db.js
 const mysql = require('mysql2');
+require('dotenv').config(); 
 
-// Tạo kết nối đến cơ sở dữ liệu MySQL
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '', // Thay đổi mật khẩu nếu có
-  database: 'lcms_v1', // Tên cơ sở dữ liệu của bạn
-  port: 3306
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT
 });
 
-// Kiểm tra kết nối
 db.connect(err => {
   if (err) {
     console.error('Lỗi kết nối MySQL:', err);
@@ -19,4 +17,4 @@ db.connect(err => {
   }
 });
 
-module.exports = db; // Xuất kết nối để sử dụng ở các file khác
+module.exports = db;
