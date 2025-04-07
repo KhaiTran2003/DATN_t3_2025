@@ -1,41 +1,48 @@
-/* Scroll mượt và không che */
+/* ================== Global ================== */
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #111827;
 }
 
-/* Navbar */
+/* ================== Navbar ================== */
 .navbar-home {
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .navbar-home h1 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #2563eb;
-  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .navbar-home ul {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  align-items: center;
+  gap: 1.75rem;
   margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
 }
 
 .navbar-home ul li a {
   text-decoration: none;
   color: #374151;
   font-weight: 500;
+  font-size: 1rem;
   transition: color 0.3s ease;
 }
 
@@ -43,7 +50,64 @@ html {
   color: #2563eb;
 }
 
-/* Hero */
+.user-profile {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  flex-wrap: nowrap;
+}
+
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 2px solid #3b82f6;
+}
+
+.user-profile span {
+  font-weight: 500;
+  color: #111827;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  padding: 0.25rem 0.75rem;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #111827;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-logout:hover {
+  background-color: #e5e7eb;
+}
+
+/* Responsive navbar */
+@media (max-width: 768px) {
+  .navbar-home ul {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .user-profile {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .user-profile span,
+  .btn-logout {
+    display: none;
+  }
+}
+
+/* ================== Hero ================== */
 .hero {
   background-color: #dbeafe;
   padding: 5rem 1rem;
@@ -75,7 +139,7 @@ html {
   background-color: #1e40af;
 }
 
-/* Courses */
+/* ================== Courses ================== */
 .courses {
   padding: 3rem 1.5rem;
 }
@@ -100,7 +164,7 @@ html {
 
 @media (min-width: 1024px) {
   .course-grid {
-    grid-template-columns: repeat(4, 1fr); /* ✅ 4 courses per row */
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -114,6 +178,7 @@ html {
   flex-direction: column;
   justify-content: space-between;
 }
+
 .course-card.clickable {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
@@ -126,7 +191,7 @@ html {
 
 .course-card img {
   width: 100%;
-  height: 260px; /* ✅ Cố định chiều cao ảnh */
+  height: 260px;
   object-fit: cover;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
@@ -143,16 +208,7 @@ html {
   font-size: 14px;
 }
 
-.course-card button {
-  margin-top: 1rem;
-  color: #2563eb;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-/* About */
+/* ================== About ================== */
 .about {
   background-color: #f3f4f6;
   padding: 3rem 1rem;
@@ -171,7 +227,7 @@ html {
   color: #374151;
 }
 
-/* Teachers */
+/* ================== Teachers ================== */
 .teachers {
   background-color: #f9fafb;
   padding: 3rem 1rem;
@@ -222,7 +278,7 @@ html {
   color: #4b5563;
 }
 
-/* Buttons */
+/* ================== Buttons ================== */
 .btn-primary, .btn-secondary {
   padding: 0.5rem 1.5rem;
   border: none;
@@ -251,11 +307,46 @@ html {
   background-color: #eff6ff;
 }
 
-/* Footer */
+/* ================== Footer ================== */
 .footer {
   background-color: #2563eb;
   color: white;
   text-align: center;
   padding: 1.5rem;
   margin-top: 2.5rem;
+}
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  z-index: 999;
+}
+
+.dropdown-username {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.dropdown-menu button {
+  padding: 0.4rem 0;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.dropdown-menu button:hover {
+  color: #2563eb;
 }

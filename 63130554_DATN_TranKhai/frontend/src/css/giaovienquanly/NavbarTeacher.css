@@ -1,0 +1,105 @@
+/* ========== Navbar chính ========= */
+.navbar-teacher {
+    height: 64px;
+    background: #ffffff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-left: 40px;
+  }
+  
+  .navbar-left-teacher {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .navbar-brand-teacher {
+    color: #4f46e5;
+    font-weight: bold;
+    font-size: 22px;
+  }
+  
+  .search-box-teacher {
+    background-color: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .search-box-teacher input {
+    border: none;
+    background: transparent;
+    outline: none;
+  }
+  
+  .navbar-right-teacher {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+  }
+  
+  /* ========== Bell & Avatar ========== */
+  .icon-bell {
+    font-size: 18px;
+    cursor: pointer;
+    color: #4b5563;
+  }
+  
+  .avatar-teacher {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #3b82f6;
+    cursor: pointer;
+  }
+  
+  .avatar-icon {
+    font-size: 32px;
+    color: #4b5563;
+    cursor: pointer;
+  }
+  
+  /* ========== Dropdown menu ========== */
+  .dropdown-menu-teacher {
+    position: absolute;
+    top: 56px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+    z-index: 999;
+  }
+  
+  .dropdown-menu-teacher p {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #111827;
+  }
+  
+  .dropdown-menu-teacher button {
+    padding: 0.4rem 0;
+    background: none;
+    border: none;
+    text-align: left;
+    color: #374151;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .dropdown-menu-teacher button:hover {
+    color: #2563eb;
+  }
+  

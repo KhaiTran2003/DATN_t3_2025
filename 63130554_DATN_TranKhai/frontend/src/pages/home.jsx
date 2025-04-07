@@ -1,33 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/pages/Home.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Home() {
   const [khoaHoc, setKhoaHoc] = useState([]);
   const [giaoVien, setGiaoVien] = useState([]);
   const [visibleCount, setVisibleCount] = useState(3);
+  const [user, setUser] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const navigate = useNavigate();
+  const dropdownRef = useRef();
 
   useEffect(() => {
     // Lấy danh sách khóa học
     axios.get('http://localhost:5000/api/danhsachkhoahoc')
       .then(res => setKhoaHoc(res.data))
       .catch(err => console.error('Lỗi khóa học:', err));
-
+  
     // Lấy danh sách giáo viên
     axios.get('http://localhost:5000/api/giaovien')
       .then(res => setGiaoVien(res.data))
       .catch(err => console.error('Lỗi giáo viên:', err));
+  
+    // Kiểm tra user và vai trò
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+  
+    if (storedUser && token) { // ✅ Chỉ khi còn token mới xử lý
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+  
+      if (parsedUser.vaiTro === 'giaovien') {
+        navigate('/giaovienquanly/dashboardteacher');
+      }
+    }
+  
+    // Xử lý đóng dropdown khi click ra ngoài
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
+  
 
-  const handleXemThem = () => {
-    setVisibleCount(prev => prev + 3);
+  const handleXemThem = () => setVisibleCount(prev => prev + 3);
+  const handleXemTatCa = () => navigate('/danhsachkhoahoc');
+
+  const handleDangXuat = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setShowDropdown(false);
+    navigate('/');
   };
 
-  const handleXemTatCa = () => {
-    navigate('/danhsachkhoahoc');
+  const handleAvatarClick = () => {
+    setShowDropdown(!showDropdown);
   };
 
   return (
@@ -40,7 +75,30 @@ function Home() {
           <li><a href="#khoahoc">Khóa học</a></li>
           <li><a href="#gioithieu">Giới thiệu</a></li>
           <li><a href="#giaovien">Giáo viên</a></li>
-          <li><a href="#dangnhap">Đăng nhập</a></li>
+          {user ? (
+            <li className="user-profile" ref={dropdownRef}>
+              <img
+                src={`http://localhost:5000/uploads/anhhocvien/${user.avatar || 'default.jpg'}`}
+                alt={user.hoVaTen}
+                className="user-avatar"
+                onClick={handleAvatarClick}
+                style={{ cursor: 'pointer' }}
+              />
+              {showDropdown && (
+                <div className="dropdown-menu">
+                  <p className="dropdown-username">{user.hoVaTen}</p>
+                  <button onClick={() => navigate('/hosocanhan')}>Chỉnh sửa hồ sơ</button>
+                  <button onClick={() => {
+                    const xacNhan = window.confirm("Bạn có chắc chắn muốn đăng xuất?");
+                    if (xacNhan) handleDangXuat();
+                  }}>Đăng xuất</button>
+
+                </div>
+              )}
+            </li>
+          ) : (
+            <li><Link to="/dangnhap">Đăng nhập</Link></li>
+          )}
         </ul>
       </nav>
 
@@ -57,16 +115,15 @@ function Home() {
         <div className="course-grid">
           {khoaHoc.slice(0, visibleCount).map((kh) => (
             <div
-                key={kh.maKH}
-                className="course-card clickable"
-                onClick={() => navigate(`/khoahoc/chitietkhoahoc/${kh.maKH}`)}
-                >
-                <img src={`http://localhost:5000/uploads/anhkhoahoc/${kh.anhKhoaHoc}`} alt={kh.tenKhoaHoc} />
-                <h4>{kh.tenKhoaHoc}</h4>
-                <p><strong>Giá:</strong> {kh.gia}</p>
-                <p>{kh.moTa}</p>
+              key={kh.maKH}
+              className="course-card clickable"
+              onClick={() => navigate(`/khoahoc/chitietkhoahoc/${kh.maKH}`)}
+            >
+              <img src={`http://localhost:5000/uploads/anhkhoahoc/${kh.anhKhoaHoc}`} alt={kh.tenKhoaHoc} />
+              <h4>{kh.tenKhoaHoc}</h4>
+              <p><strong>Giá:</strong> {kh.gia}</p>
+              <p>{kh.moTa}</p>
             </div>
-
           ))}
         </div>
 

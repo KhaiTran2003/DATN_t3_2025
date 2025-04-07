@@ -4,6 +4,9 @@ const db = require('../database');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+require('dotenv').config(); // để sử dụng JWT_SECRET trong file .env
+
 
 // Cấu hình lưu ảnh avatar
 const storage = multer.diskStorage({
@@ -97,5 +100,44 @@ router.delete('/xoagiaovien/:id', (req, res) => {
     });
   });
 });
+
+// POST: Đăng nhập giáo viên
+router.post('/dangnhapgiaovien', (req, res) => {
+  const { tenDangNhap, matKhau } = req.body;
+
+  db.query(
+    'SELECT * FROM giaovien WHERE tenDangNhap = ? AND matKhau = ?',
+    [tenDangNhap, matKhau],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: 'Lỗi server' });
+      if (results.length === 0)
+        return res.status(401).json({ error: 'Sai tên đăng nhập hoặc mật khẩu' });
+
+      const user = results[0];
+      const token = jwt.sign(
+        {
+          maGV: user.maGV,
+          tenDangNhap: user.tenDangNhap,
+          hoVaTen: user.hoVaTen,
+          vaiTro: 'giaovien'
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '2h' }
+      );
+
+      res.json({
+        message: 'Đăng nhập thành công',
+        token,
+        user: {
+          maGV: user.maGV,
+          tenDangNhap: user.tenDangNhap,
+          hoVaTen: user.hoVaTen,
+          vaiTro: 'giaovien'
+        }
+      });
+    }
+  );
+});
+
 
 module.exports = router;
