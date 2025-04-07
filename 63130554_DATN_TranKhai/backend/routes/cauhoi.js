@@ -20,6 +20,25 @@ router.get('/cauhoi/baihoc/:maBH', (req, res) => {
     res.json(results);
   });
 });
+//lấy theo giáo viên
+router.get('/mylistquestion', (req, res) => {
+  const maGV = req.query.maGV;
+  if (!maGV) return res.status(400).json({ error: 'Thiếu mã giáo viên' });
+
+  const sql = `
+    SELECT ch.*
+    FROM cauhoi ch
+    JOIN baihoc bh ON ch.maBH = bh.maBH
+    JOIN chude cd ON bh.maCD = cd.maCD
+    JOIN khoahoc kh ON cd.maKH = kh.maKH
+    JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
+    WHERE kgv.maGV = ?
+  `;
+  db.query(sql, [maGV], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Lỗi khi truy vấn câu hỏi theo giáo viên' });
+    res.json(results);
+  });
+});
 
 // GET: Câu hỏi theo ID
 router.get('/cauhoi/:id', (req, res) => {

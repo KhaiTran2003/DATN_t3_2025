@@ -11,7 +11,24 @@ router.get('/chude', (req, res) => {
     res.json(results);
   });
 });
+//lấy chủ đề theo giáo viên
+router.get('/mylisttopic', (req, res) => {
+  const maGV = req.query.maGV;
+  if (!maGV) return res.status(400).json({ error: 'Thiếu mã giáo viên' });
 
+  const query = `
+    SELECT cd.*
+    FROM chude cd
+    JOIN khoahoc kh ON cd.maKH = kh.maKH
+    JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
+    WHERE kgv.maGV = ?
+  `;
+
+  db.query(query, [maGV], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Lỗi truy vấn danh sách chủ đề' });
+    res.json(results);
+  });
+});
 // GET: Lấy chủ đề theo khóa học
 router.get('/chude/khoahoc/:maKH', (req, res) => {
   const { maKH } = req.params;

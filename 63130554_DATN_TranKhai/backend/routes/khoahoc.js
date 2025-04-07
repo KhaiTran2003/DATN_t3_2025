@@ -24,6 +24,27 @@ router.get('/danhsachkhoahoc', (req, res) => {
     res.json(results);
   });
 });
+// GET: Danh sách khóa học theo giáo viên
+router.get('/mylistcourse', (req, res) => {
+  const maGV = req.query.maGV; // 🟢 truyền từ frontend lên dạng ?maGV=1
+
+  if (!maGV) {
+    return res.status(400).json({ error: 'Thiếu mã giáo viên' });
+  }
+
+  const query = `
+    SELECT kh.*
+    FROM khoahoc kh
+    JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
+    WHERE kgv.maGV = ?
+  `;
+
+  db.query(query, [maGV], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Lỗi truy vấn danh sách khoá học' });
+    res.json(results);
+  });
+});
+
 // GET /api/khoahoc/:id
 router.get('/khoahoc/:id', (req, res) => {
   const id = req.params.id;
@@ -40,6 +61,10 @@ router.post('/themkhoahoc', upload.single('anhKhoaHoc'), (req, res) => {
   const { tenKhoaHoc, moTa, gia, level, chuanDauRa, maGV } = req.body;
   const anhKhoaHoc = req.file ? req.file.filename : '';
 
+  if (!maGV) {
+    return res.status(400).json({ error: 'Thiếu mã giáo viên (maGV)' });
+  }
+
   db.query(
     'INSERT INTO khoahoc (tenKhoaHoc, moTa, gia, level, chuanDauRa, anhKhoaHoc) VALUES (?, ?, ?, ?, ?, ?)',
     [tenKhoaHoc, moTa, gia, level, chuanDauRa, anhKhoaHoc],
@@ -48,7 +73,7 @@ router.post('/themkhoahoc', upload.single('anhKhoaHoc'), (req, res) => {
 
       const maKH = result.insertId;
 
-      // Thêm vào bảng khoahoc_giaovien
+      // Gắn giáo viên
       db.query(
         'INSERT INTO khoahoc_giaovien (maGV, maKH) VALUES (?, ?)',
         [maGV, maKH],
@@ -58,12 +83,13 @@ router.post('/themkhoahoc', upload.single('anhKhoaHoc'), (req, res) => {
             return res.status(500).json({ error: 'Đã thêm khóa học nhưng lỗi khi lưu giáo viên dạy' });
           }
 
-          res.json({ message: 'Thêm khoá học và phân công giảng viên thành công', maKH });
+          res.json({ message: 'Thêm khóa học và phân công giảng viên thành công' });
         }
       );
     }
   );
 });
+
 
 
 // API sửa khóa học

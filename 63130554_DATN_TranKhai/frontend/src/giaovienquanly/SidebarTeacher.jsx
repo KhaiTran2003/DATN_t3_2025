@@ -11,13 +11,13 @@ const SidebarTeacher = () => {
         <NavLink to="/giaovienquanly/khoahoc" className="sidebar-link" activeClassName="active">
           Quản lý khóa học
         </NavLink>
-        <NavLink to="/teacher/chude" className="sidebar-link" activeClassName="active">
+        <NavLink to="/giaovienquanly/danhsachchude" className="sidebar-link" activeClassName="active">
           Quản lý chủ đề
         </NavLink>
-        <NavLink to="/teacher/baihoc" className="sidebar-link" activeClassName="active">
+        <NavLink to="/giaovienquanly/danhsachbaihoc" className="sidebar-link" activeClassName="active">
           Quản lý bài học
         </NavLink>
-        <NavLink to="/teacher/cauhoi" className="sidebar-link" activeClassName="active">
+        <NavLink to="/giaovienquanly/cauhoivadapan" className="sidebar-link" activeClassName="active">
           Câu hỏi & Đáp án
         </NavLink>
         <NavLink to="/teacher/tien-trinh" className="sidebar-link" activeClassName="active">

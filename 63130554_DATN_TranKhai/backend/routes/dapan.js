@@ -11,7 +11,25 @@ router.get('/dapan', (req, res) => {
     res.json(results);
   });
 });
+router.get('/mylistanswer', (req, res) => {
+  const maGV = req.query.maGV;
+  if (!maGV) return res.status(400).json({ error: 'Thiếu mã giáo viên' });
 
+  const sql = `
+    SELECT da.*
+    FROM dapan da
+    JOIN cauhoi ch ON da.maCH = ch.maCH
+    JOIN baihoc bh ON ch.maBH = bh.maBH
+    JOIN chude cd ON bh.maCD = cd.maCD
+    JOIN khoahoc kh ON cd.maKH = kh.maKH
+    JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
+    WHERE kgv.maGV = ?
+  `;
+  db.query(sql, [maGV], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Lỗi khi truy vấn đáp án theo giáo viên' });
+    res.json(results);
+  });
+});
 // GET: Đáp án theo câu hỏi
 router.get('/dapan/cauhoi/:maCH', (req, res) => {
   const { maCH } = req.params;

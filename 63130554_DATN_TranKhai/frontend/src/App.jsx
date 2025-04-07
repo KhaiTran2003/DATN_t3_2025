@@ -8,6 +8,9 @@ import DangKy from './component/DangKy';
 import DangKyGiaoVien from './component/DangKyGiaovien';
 import DangNhap from './component/DangNhap';
 import DashboardTeacher from './giaovienquanly/DashboardTeacher';
+import DSChuDe from './giaovienquanly/chude/DSChuDe';
+import DSBaiHoc from './giaovienquanly/baihoc/DSBaiHoc';
+import BaiKiemTra from './giaovienquanly/baikiemtra/BaiKiemTra';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <Route path="/giaovienquanly/khoahoc" element={<DSKhoaHoc />} />
         <Route path="/khoahoc/chitietkhoahoc/:id" element={<ChiTietKhoaHoc />} />
         <Route path="/giaovienquanly/khoahoc/them" element={<ThemKhoaHoc />} />
+        <Route path="/giaovienquanly/danhsachchude" element={<DSChuDe />} />
+        <Route path="/giaovienquanly/danhsachbaihoc" element={<DSBaiHoc />} />
+        <Route path="/giaovienquanly/cauhoivadapan" element={<BaiKiemTra />} />
         <Route path="/giaovienquanly/dashboardteacher" element={<DashboardTeacher />} />
         <Route path="/giaovienquanly/khoahoc/sua/:id" element={<SuaKhoaHoc />} />
         <Route path="/dangnhap" element={<DangNhap />} />
