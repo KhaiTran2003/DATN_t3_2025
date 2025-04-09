@@ -20,7 +20,7 @@ router.get('/mylistlesson', (req, res) => {
   }
 
   const query = `
-    SELECT bh.*
+    SELECT bh.*, cd.tenChuDe
     FROM baihoc bh
     JOIN chude cd ON bh.maCD = cd.maCD
     JOIN khoahoc kh ON cd.maKH = kh.maKH
@@ -33,6 +33,7 @@ router.get('/mylistlesson', (req, res) => {
     res.json(results);
   });
 });
+
 
 // GET: Lấy bài học theo maCD (chủ đề)
 router.get('/baihoc/chude/:maCD', (req, res) => {

@@ -19,6 +19,52 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+router.get('/hosocanhan/:vaiTro/:id', (req, res) => {
+  const { vaiTro, id } = req.params;
+  const table = vaiTro === 'hocvien' ? 'hocvien' : 'giaovien';
+  const key = vaiTro === 'hocvien' ? 'maHV' : 'maGV';
+
+  db.query(`SELECT * FROM ${table} WHERE ${key} = ?`, [id], (err, results) => {
+    if (err || results.length === 0)
+      return res.status(404).json({ error: 'Không tìm thấy hồ sơ' });
+    res.json(results[0]);
+  });
+});
+
+router.put('/capnhathoso/:vaiTro/:id', upload.single('avatar'), (req, res) => {
+  const { vaiTro, id } = req.params;
+  const { hoVaTen, email, tenDangNhap, matKhau, diaChi } = req.body;
+  const avatarMoi = req.file ? req.file.filename : null;
+
+  const table = vaiTro === 'hocvien' ? 'hocvien' : 'giaovien';
+  const key = vaiTro === 'hocvien' ? 'maHV' : 'maGV';
+  const folder = vaiTro === 'hocvien' ? 'anhhocvien' : 'anhgiaovien';
+
+  // Lấy avatar cũ
+  db.query(`SELECT avatar FROM ${table} WHERE ${key} = ?`, [id], (err, result) => {
+    if (err || result.length === 0)
+      return res.status(404).json({ error: 'Không tìm thấy người dùng' });
+
+    const avatarCu = result[0].avatar;
+
+    if (avatarMoi && avatarCu) {
+      const filePath = path.join(__dirname, `../uploads/${folder}`, avatarCu);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    const avatarUpdate = avatarMoi || avatarCu;
+
+    db.query(
+      `UPDATE ${table} SET hoVaTen = ?, email = ?, tenDangNhap = ?, matKhau = ?, diaChi = ?, avatar = ? WHERE ${key} = ?`,
+      [hoVaTen, email, tenDangNhap, matKhau, diaChi, avatarUpdate, id],
+      (err2) => {
+        if (err2) return res.status(500).json({ error: 'Không thể cập nhật hồ sơ' });
+        res.json({ message: 'Cập nhật hồ sơ thành công' });
+      }
+    );
+  });
+});
+
 /* ========= API học viên ========= */
 
 // GET: Lấy danh sách học viên

@@ -9,19 +9,31 @@ import '../../css/giaovienquanly/DSChuDe.css';
 
 const DSChuDe = () => {
   const [chuDe, setChuDe] = useState([]);
+  const [khoaHoc, setKhoaHoc] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userGV = localStorage.getItem('userGV');
-    if (!userGV) return;
+    const userGV = JSON.parse(localStorage.getItem('userGV'));
+    const maGV = userGV?.maGV;
   
-    const { maGV } = JSON.parse(userGV);
+    if (!maGV) {
+      console.error('Không tìm thấy mã giáo viên');
+      return;
+    }
+  
+    // Gọi song song cả 2 API
+    axios.get(`http://localhost:5000/api/mylistcourse?maGV=${maGV}`)
+      .then((res) => setKhoaHoc(res.data))
+      .catch((err) => console.error('Lỗi khi load khóa học:', err));
+  
     axios.get(`http://localhost:5000/api/mylisttopic?maGV=${maGV}`)
       .then((res) => setChuDe(res.data))
       .catch((err) => console.error('Lỗi khi load chủ đề:', err));
   }, []);
+  
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Bạn có chắc muốn xoá chủ đề này không?');
@@ -38,7 +50,7 @@ const DSChuDe = () => {
   };
 
   const columns = [
-    { label: 'Mã KH', key: 'maKH' },
+    { label: 'Tên khoá học', key: 'tenKhoaHoc' },
     { label: 'Tên chủ đề', key: 'tenChuDe' },
     {
       label: 'Thao tác',
@@ -78,7 +90,7 @@ const DSChuDe = () => {
             <div className="page-header">
               <h1 className="page-title">Danh sách chủ đề</h1>
               <button
-                onClick={() => navigate('/giaovienquanly/chude/them')}
+                onClick={() => navigate('/giaovienquanly/chude/themchude')}
                 className="btn add"
               >
                 + Thêm chủ đề

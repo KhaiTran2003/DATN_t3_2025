@@ -83,4 +83,33 @@
     border-radius: 6px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
+  .answer-list {
+    list-style-type: none; /* Bỏ chấm */
+    margin: 0;            /* Bỏ khoảng cách mặc định */
+    padding: 0;           /* Bỏ khoảng cách mặc định */
+  }
   
+  .answer-item {
+    margin: 0;
+    padding: 0;
+  }
+  .answer-list {
+  list-style-type: none;  /* Bỏ bullet */
+  margin: 0;
+  padding: 0;
+}
+
+.answer-item {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.answer-item label {
+  cursor: pointer;
+}
+
+/* Đáp án đúng được hiển thị màu xanh lá */
+.dap-an-dung {
+  color: green;
+  font-weight: bold;  /* Nếu bạn muốn làm nổi bật */
+}

@@ -2,53 +2,48 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../css/pages/Home.css';
 import { useNavigate, Link } from 'react-router-dom';
-
+import HoSoCaNhan from '../component/HoSoCaNhan';
 function Home() {
   const [khoaHoc, setKhoaHoc] = useState([]);
   const [giaoVien, setGiaoVien] = useState([]);
   const [visibleCount, setVisibleCount] = useState(3);
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showModalHoSo, setShowModalHoSo] = useState(false); // Modal hiển thị
 
   const navigate = useNavigate();
   const dropdownRef = useRef();
 
   useEffect(() => {
-    // Lấy danh sách khóa học
     axios.get('http://localhost:5000/api/danhsachkhoahoc')
       .then(res => setKhoaHoc(res.data))
       .catch(err => console.error('Lỗi khóa học:', err));
-  
-    // Lấy danh sách giáo viên
+
     axios.get('http://localhost:5000/api/giaovien')
       .then(res => setGiaoVien(res.data))
       .catch(err => console.error('Lỗi giáo viên:', err));
-  
-    // Kiểm tra user và vai trò
+
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-  
-    if (storedUser && token) { // ✅ Chỉ khi còn token mới xử lý
+
+    if (storedUser && token) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-  
+
       if (parsedUser.vaiTro === 'giaovien') {
         navigate('/giaovienquanly/dashboardteacher');
       }
     }
-  
-    // Xử lý đóng dropdown khi click ra ngoài
+
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
-  
 
   const handleXemThem = () => setVisibleCount(prev => prev + 3);
   const handleXemTatCa = () => navigate('/danhsachkhoahoc');
@@ -78,7 +73,7 @@ function Home() {
           {user ? (
             <li className="user-profile" ref={dropdownRef}>
               <img
-                src={`http://localhost:5000/uploads/anhhocvien/${user.avatar || 'default.jpg'}`}
+                src={`http://localhost:5000/uploads/${user.vaiTro === 'hocvien' ? 'anhhocvien' : 'anhgiaovien'}/${user.avatar || 'default.jpg'}`}
                 alt={user.hoVaTen}
                 className="user-avatar"
                 onClick={handleAvatarClick}
@@ -87,12 +82,11 @@ function Home() {
               {showDropdown && (
                 <div className="dropdown-menu">
                   <p className="dropdown-username">{user.hoVaTen}</p>
-                  <button onClick={() => navigate('/hosocanhan')}>Chỉnh sửa hồ sơ</button>
+                  <button onClick={() => setShowModalHoSo(true)}>Chỉnh sửa hồ sơ</button>
                   <button onClick={() => {
                     const xacNhan = window.confirm("Bạn có chắc chắn muốn đăng xuất?");
                     if (xacNhan) handleDangXuat();
                   }}>Đăng xuất</button>
-
                 </div>
               )}
             </li>
@@ -109,7 +103,7 @@ function Home() {
         <button>Khám phá ngay</button>
       </section>
 
-      {/* Khóa học từ API */}
+      {/* Khóa học */}
       <section className="courses" id="khoahoc">
         <h3>Khóa học nổi bật</h3>
         <div className="course-grid">
@@ -121,13 +115,12 @@ function Home() {
             >
               <img src={`http://localhost:5000/uploads/anhkhoahoc/${kh.anhKhoaHoc}`} alt={kh.tenKhoaHoc} />
               <h4>{kh.tenKhoaHoc}</h4>
-              <p><strong>Giá:</strong> {kh.gia}</p>
+              <p><strong>Giá:</strong> {kh.gia < 1 ? 'Miễn phí' : `${kh.gia.toLocaleString()} VNĐ`}</p>
               <p>{kh.moTa}</p>
             </div>
           ))}
         </div>
 
-        {/* Nút Xem thêm & Xem tất cả */}
         <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
           {visibleCount < khoaHoc.length && (
             <button onClick={handleXemThem} className="btn-primary" style={{ marginRight: '1rem' }}>
@@ -140,7 +133,7 @@ function Home() {
         </div>
       </section>
 
-      {/* About */}
+      {/* Giới thiệu */}
       <section className="about" id="gioithieu">
         <h3>Về LCMS</h3>
         <p>
@@ -149,7 +142,7 @@ function Home() {
         </p>
       </section>
 
-      {/* Giáo viên từ API */}
+      {/* Giáo viên */}
       <section className="teachers" id="giaovien">
         <h3>Đội ngũ giảng viên</h3>
         <div className="teacher-grid">
@@ -167,6 +160,15 @@ function Home() {
       <footer className="footer">
         &copy; 2025 LCMS. All rights reserved.
       </footer>
+
+      {/* Modal chỉnh sửa hồ sơ */}
+      {showModalHoSo && user && (
+        <HoSoCaNhan
+          vaiTro={user.vaiTro}
+          id={user.vaiTro === 'hocvien' ? user.maHV : user.maGV}
+          onClose={() => setShowModalHoSo(false)}
+        />
+      )}
     </div>
   );
 }

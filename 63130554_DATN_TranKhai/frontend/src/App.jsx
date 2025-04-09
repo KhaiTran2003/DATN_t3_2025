@@ -11,7 +11,13 @@ import DashboardTeacher from './giaovienquanly/DashboardTeacher';
 import DSChuDe from './giaovienquanly/chude/DSChuDe';
 import DSBaiHoc from './giaovienquanly/baihoc/DSBaiHoc';
 import BaiKiemTra from './giaovienquanly/baikiemtra/BaiKiemTra';
-
+import HoSoCaNhan from './component/HoSoCaNhan';
+import ChuDe from './pages/ChuDe';
+import ThemChuDe from './giaovienquanly/chude/ThemChuDe';
+import SuaChuDe from './giaovienquanly/chude/SuaChuDe';
+import ThemBaiHoc from './giaovienquanly/baihoc/ThemBaiHoc';
+import SuaBaiHoc from './giaovienquanly/baihoc/SuaBaiHoc';
+import ThemBaiKiemTra from './giaovienquanly/baikiemtra/ThemBaiKiemTra';
 function App() {
   return (
     <Router>
@@ -25,6 +31,18 @@ function App() {
         <Route path="/giaovienquanly/cauhoivadapan" element={<BaiKiemTra />} />
         <Route path="/giaovienquanly/dashboardteacher" element={<DashboardTeacher />} />
         <Route path="/giaovienquanly/khoahoc/sua/:id" element={<SuaKhoaHoc />} />
+
+        <Route path="/giaovienquanly/chude/themchude" element={<ThemChuDe />} />
+        <Route path="/giaovienquanly/chude/sua/:id" element={<SuaChuDe />} />
+
+        <Route path="/giaovienquanly/baihoc/thembaihoc" element={<ThemBaiHoc />} />
+        <Route path="/giaovienquanly/baihoc/suabaihoc/:id" element={<SuaBaiHoc />} />
+
+        <Route path="/giaovienquanly/baikiemtra/thembaikiemtra" element={<ThemBaiKiemTra />} />
+
+        <Route path="/hosocanhan/:id" element={<HoSoCaNhan />} />
+        <Route path="/hosocanhan/:id" element={<SuaKhoaHoc />} />
+        <Route path="/chude" element={<ChuDe />} />
         <Route path="/dangnhap" element={<DangNhap />} />
         <Route path="/dangkyhocvien" element={<DangKy />} />
         <Route path="/dangkygiaovien" element={<DangKyGiaoVien />} />

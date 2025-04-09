@@ -39,17 +39,32 @@ const DSBaiHoc = () => {
   };
 
   const columns = [
-    { label: 'Mã CD', key: 'maCD' },
+    { label: 'Chủ đề', key: 'tenChuDe' },
     { label: 'Tên bài học', key: 'tenBaiHoc' },
-    { label: 'Nội dung', key: 'noiDung' },
-    { label: 'URL', key: 'url' },
+    {
+      label: 'Nội dung',
+      key: 'noiDung',
+      render: (value) => {
+        const maxLength = 50;
+        return value.length > maxLength ? value.slice(0, maxLength) + '...' : value;
+      }
+    },
+    {
+      label: 'URL',
+      key: 'url',
+      render: (value) => {
+        const maxLength = 50;
+        const shortURL = value && value.length > maxLength ? value.slice(0, maxLength) + '...' : value;
+        return value ? <a href={value} target="_blank" rel="noopener noreferrer" title={value}>{shortURL}</a> : '—';
+      }
+    },
     {
       label: 'Thao tác',
       key: 'maBH',
       render: (value, row) => (
         <div className="action-buttons">
           <button
-            onClick={() => navigate(`/giaovienquanly/baihoc/sua/${row.maBH}`)}
+            onClick={() => navigate(`/giaovienquanly/baihoc/suabaihoc/${row.maBH}`)}
             className="btn edit"
           >
             ✏️ Sửa
@@ -64,6 +79,8 @@ const DSBaiHoc = () => {
       )
     }
   ];
+  
+  
 
   const totalPages = Math.ceil(baiHoc.length / itemsPerPage);
   const paginatedData = baiHoc.slice(
@@ -81,7 +98,7 @@ const DSBaiHoc = () => {
             <div className="page-header">
               <h1 className="page-title">Danh sách bài học</h1>
               <button
-                onClick={() => navigate('/giaovienquanly/baihoc/them')}
+                onClick={() => navigate('/giaovienquanly/baihoc/thembaihoc')}
                 className="btn add"
               >
                 + Thêm bài học

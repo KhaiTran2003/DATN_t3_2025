@@ -51,10 +51,10 @@ router.get('/dapan/:id', (req, res) => {
 
 // POST: Thêm đáp án
 router.post('/themdapan', (req, res) => {
-  const { maCH, dapAn } = req.body;
+  const { maCH, dapAn, dungsai } = req.body;
   db.query(
-    'INSERT INTO dapan (maCH, dapAn) VALUES (?, ?)',
-    [maCH, dapAn],
+    'INSERT INTO dapan (maCH, dapAn, dungsai) VALUES (?, ?, ?)',
+    [maCH, dapAn, dungsai],
     (err, result) => {
       if (err) return res.status(500).json({ error: 'Không thể thêm đáp án' });
       res.json({ message: 'Thêm đáp án thành công', id: result.insertId });
@@ -62,19 +62,21 @@ router.post('/themdapan', (req, res) => {
   );
 });
 
+
 // PUT: Sửa đáp án
 router.put('/suadapan/:id', (req, res) => {
-  const { maCH, dapAn } = req.body;
+  const { maCH, dapAn, dungsai } = req.body;
   const { id } = req.params;
   db.query(
-    'UPDATE dapan SET maCH = ?, dapAn = ? WHERE maDA = ?',
-    [maCH, dapAn, id],
+    'UPDATE dapan SET maCH = ?, dapAn = ?, dungsai = ? WHERE maDA = ?',
+    [maCH, dapAn, dungsai, id],
     (err) => {
       if (err) return res.status(500).json({ error: 'Không thể cập nhật đáp án' });
       res.json({ message: 'Cập nhật đáp án thành công' });
     }
   );
 });
+
 
 // DELETE: Xoá đáp án
 router.delete('/xoadapan/:id', (req, res) => {

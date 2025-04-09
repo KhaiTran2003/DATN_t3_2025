@@ -4,13 +4,15 @@ import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
 import Table from '../../component/table';
 import PhanTrang from '../../component/PhanTrang';
-import '../../css/giaovienquanly/DSKhoahoc.css'; // dùng lại CSS layout chuẩn
+import '../../css/giaovienquanly/DSKhoahoc.css'; 
+import { useNavigate } from 'react-router-dom';
 
 const BaiKiemTra = () => {
   const [cauHoiList, setCauHoiList] = useState([]);
   const [dapanMap, setDapanMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userGV = localStorage.getItem('userGV');
@@ -49,9 +51,9 @@ const BaiKiemTra = () => {
 
   const columns = [
     {
-      label: 'STT',
-      key: 'stt',
-      render: (_, __, index) => (currentPage - 1) * itemsPerPage + index + 1
+      label: 'Tên bài học',
+      key: 'tenBaiHoc',
+      render: (value, row) => row.tenBaiHoc || ''
     },
     { label: 'Câu hỏi', key: 'cauHoi' },
     {
@@ -62,7 +64,12 @@ const BaiKiemTra = () => {
           {(dapanMap[row.maCH] || []).map((da, idx) => (
             <li key={da.maDA} className="answer-item">
               <label>
-                <input type="radio" name={`cauhoi-${row.maCH}`} />
+                <input
+                  type="radio"
+                  name={`cauhoi-${row.maCH}`}
+                  checked={!da.dungsai}  // Đáp án đúng được đánh dấu là !dungsai
+                  disabled                 // Không cho thay đổi lựa chọn
+                />
                 {String.fromCharCode(65 + idx)}. {da.dapAn}
               </label>
             </li>
@@ -81,7 +88,12 @@ const BaiKiemTra = () => {
           <div className="page-container">
             <div className="page-header">
               <h1 className="page-title">Bài kiểm tra</h1>
-              <button className="btn add">+ Thêm câu hỏi và đáp án</button>
+              <button 
+                className="btn add" 
+                onClick={() => navigate('/giaovienquanly/baikiemtra/thembaikiemtra')}
+              >
+                + Thêm bài kiểm tra
+              </button>
             </div>
 
             <Table data={paginatedData} columns={columns} />

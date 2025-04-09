@@ -1,0 +1,44 @@
+.accordion-container {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial;
+  }
+  
+  .accordion-item {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+  }
+  
+  .accordion-header {
+    background-color: #f5f5f5;
+    padding: 14px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .accordion-header:hover {
+    background-color: #eee;
+  }
+  
+  .accordion-content {
+    background-color: #fff;
+    padding: 10px 30px;
+  }
+  
+  .lesson-item {
+    padding: 8px 0;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .lesson-item:hover {
+    text-decoration: underline;
+  }
+  
+  .lesson-count {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  

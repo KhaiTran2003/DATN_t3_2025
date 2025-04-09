@@ -1,7 +1,9 @@
-// 📁 frontend/pages/giaovienquanly/khoahoc/SuaKhoaHoc.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import NavbarTeacher from '../NavbarTeacher';
+import SidebarTeacher from '../SidebarTeacher';
+import '../../css/giaovienquanly/ThemKhoaHoc.css';
 
 const SuaKhoaHoc = () => {
   const { id } = useParams();
@@ -54,47 +56,89 @@ const SuaKhoaHoc = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Chỉnh sửa khóa học</h2>
-      <form onSubmit={handleSubmit} className="flex gap-6">
-        <div className="flex flex-col items-center w-1/3">
-          <label className="mb-2 font-medium">Ảnh hiện tại</label>
-          {form.anhKhoaHoc && (
-            <img
-              src={`http://localhost:5000/uploads/anhkhoahoc/${form.anhKhoaHoc}`}
-              alt="Preview"
-              className="w-40 h-40 object-cover rounded shadow mb-2"
-            />
-          )}
-          <input type="file" name="anhKhoaHoc" accept="image/*" onChange={handleFileChange} className="text-sm" />
-        </div>
+    <div className="teacher-layout">
+      <SidebarTeacher />
+      <div className="teacher-main-content">
+        <NavbarTeacher />
+        <div className="teacher-page-content">
+          <div className="page-container">
+            <div className="page-header">
+              <h1 className="page-title">Chỉnh sửa khóa học</h1>
+            </div>
+            <div className="form-container">
+              <form onSubmit={handleSubmit} className="form-grid">
+                <div className="form-image">
+                  <label>Ảnh khóa học</label>
+                  {form.anhKhoaHoc && (
+                    <img
+                      src={`http://localhost:5000/uploads/anhkhoahoc/${form.anhKhoaHoc}`}
+                      alt="Preview"
+                      className="image-preview"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    name="anhKhoaHoc"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </div>
 
-        <div className="flex-1 grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">Tên khóa học</label>
-            <input type="text" name="tenKhoaHoc" value={form.tenKhoaHoc} onChange={handleChange} className="w-full border px-3 py-2 rounded" />
-          </div>
-          <div>
-            <label className="block mb-1">Giá</label>
-            <input type="number" name="gia" value={form.gia} onChange={handleChange} className="w-full border px-3 py-2 rounded" />
-          </div>
-          <div>
-            <label className="block mb-1">Level</label>
-            <input type="text" name="level" value={form.level} onChange={handleChange} className="w-full border px-3 py-2 rounded" />
-          </div>
-          <div>
-            <label className="block mb-1">Chuẩn đầu ra</label>
-            <input type="text" name="chuanDauRa" value={form.chuanDauRa} onChange={handleChange} className="w-full border px-3 py-2 rounded" />
-          </div>
-          <div className="col-span-2">
-            <label className="block mb-1">Mô tả</label>
-            <textarea name="moTa" value={form.moTa} onChange={handleChange} rows={3} className="w-full border px-3 py-2 rounded" />
-          </div>
-          <div className="col-span-2 text-right">
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cập nhật</button>
+                <div className="form-fields">
+                  <div className="form-group">
+                    <label>Tên khóa học</label>
+                    <input
+                      type="text"
+                      name="tenKhoaHoc"
+                      value={form.tenKhoaHoc}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Giá</label>
+                    <input
+                      type="number"
+                      name="gia"
+                      value={form.gia}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Level</label>
+                    <input
+                      type="text"
+                      name="level"
+                      value={form.level}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Chuẩn đầu ra</label>
+                    <input
+                      type="text"
+                      name="chuanDauRa"
+                      value={form.chuanDauRa}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group full">
+                    <label>Mô tả</label>
+                    <textarea
+                      name="moTa"
+                      value={form.moTa}
+                      onChange={handleChange}
+                      rows={4}
+                    ></textarea>
+                  </div>
+                  <div className="form-actions full">
+                    <button type="submit">Cập nhật khóa học</button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
