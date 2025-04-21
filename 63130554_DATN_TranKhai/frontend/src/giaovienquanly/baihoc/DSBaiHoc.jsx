@@ -7,8 +7,16 @@ import SidebarTeacher from '../SidebarTeacher';
 import PhanTrang from '../../component/PhanTrang';
 import '../../css/giaovienquanly/DSBaiHoc.css';
 
+// Hàm giúp loại bỏ HTML tags và trả về text thuần
+const stripHtml = (html) => {
+  if (!html) return '';
+  // Sử dụng regex để loại bỏ tất cả các thẻ HTML
+  return html.replace(/<[^>]*>/g, '');
+};
+
 const DSBaiHoc = () => {
   const [baiHoc, setBaiHoc] = useState([]);
+  const [originalBaiHoc, setOriginalBaiHoc] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
@@ -16,13 +24,32 @@ const DSBaiHoc = () => {
   useEffect(() => {
     const userGV = localStorage.getItem('userGV');
     if (!userGV) return;
-  
+
     const { maGV } = JSON.parse(userGV);
     axios.get(`http://localhost:5000/api/mylistlesson?maGV=${maGV}`)
-      .then((res) => setBaiHoc(res.data))
+      .then((res) => {
+        setBaiHoc(res.data);
+        setOriginalBaiHoc(res.data);
+      })
       .catch((err) => console.error('Lỗi khi load danh sách bài học:', err));
   }, []);
-  
+
+  // Hàm lọc bài học theo từ khóa (tìm kiếm theo tên bài học, chủ đề hoặc nội dung)
+  const handleSearchChange = (event) => {
+    const keyword = event.target.value.toLowerCase().trim();
+    setCurrentPage(1);
+    if (!keyword) {
+      setBaiHoc(originalBaiHoc);
+      return;
+    }
+    // Lọc theo các trường: tenBaiHoc, tenChuDe và noiDung (đã loại bỏ HTML)
+    const filtered = originalBaiHoc.filter(bh =>
+      (bh.tenBaiHoc && bh.tenBaiHoc.toLowerCase().includes(keyword)) ||
+      (bh.tenChuDe && bh.tenChuDe.toLowerCase().includes(keyword)) ||
+      (bh.noiDung && stripHtml(bh.noiDung).toLowerCase().includes(keyword))
+    );
+    setBaiHoc(filtered);
+  };
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Bạn có chắc muốn xoá bài học này không?');
@@ -31,6 +58,7 @@ const DSBaiHoc = () => {
     try {
       await axios.delete(`http://localhost:5000/api/xoabaihoc/${id}`);
       setBaiHoc(prev => prev.filter(bh => bh.maBH !== id));
+      setOriginalBaiHoc(prev => prev.filter(bh => bh.maBH !== id));
       alert('Xoá thành công!');
     } catch (err) {
       console.error('Lỗi khi xoá:', err);
@@ -45,8 +73,10 @@ const DSBaiHoc = () => {
       label: 'Nội dung',
       key: 'noiDung',
       render: (value) => {
+        // Loại bỏ HTML rồi tạo preview với độ dài tối đa
         const maxLength = 50;
-        return value.length > maxLength ? value.slice(0, maxLength) + '...' : value;
+        const plainText = stripHtml(value);
+        return plainText.length > maxLength ? plainText.slice(0, maxLength) + '...' : plainText;
       }
     },
     {
@@ -57,6 +87,11 @@ const DSBaiHoc = () => {
         const shortURL = value && value.length > maxLength ? value.slice(0, maxLength) + '...' : value;
         return value ? <a href={value} target="_blank" rel="noopener noreferrer" title={value}>{shortURL}</a> : '—';
       }
+    },
+    {
+      label: 'Thời gian',
+      key: 'thoiGian',
+      render: (value) => value ? `${value} phút` : '—'
     },
     {
       label: 'Thao tác',
@@ -79,8 +114,6 @@ const DSBaiHoc = () => {
       )
     }
   ];
-  
-  
 
   const totalPages = Math.ceil(baiHoc.length / itemsPerPage);
   const paginatedData = baiHoc.slice(
@@ -92,7 +125,8 @@ const DSBaiHoc = () => {
     <div className="teacher-layout">
       <SidebarTeacher />
       <div className="teacher-main-content">
-        <NavbarTeacher />
+        {/* Truyền handleSearchChange xuống NavbarTeacher để thực hiện tìm kiếm */}
+        <NavbarTeacher handleSearchChange={handleSearchChange} />
         <div className="teacher-page-content">
           <div className="page-container">
             <div className="page-header">

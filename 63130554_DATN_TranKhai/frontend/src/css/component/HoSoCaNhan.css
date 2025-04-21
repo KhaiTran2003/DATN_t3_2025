@@ -1,69 +1,96 @@
-/* Overlay mờ nền */
+/* css/component/HoSoCaNhan.css */
+
 .hoso-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Làm mờ nền */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999; /* Trên cùng */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.hoso-modal {
+  background: #fff;
+  width: 500px;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.hoso-close-btn {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.hoso-close-btn:hover {
+  color: #333;
+}
+
+.hoso-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 3px solid #00bfa6;
+}
+
+.hoso-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.hoso-input:focus {
+  border-color: #00bfa6;
+  outline: none;
+}
+
+.hoso-submit-btn {
+  width: 100%;
+  padding: 12px;
+  background: #00bfa6;
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.hoso-submit-btn:hover {
+  background: #009688;
+}
+
+input[type="file"] {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
   }
-  
-  /* Cửa sổ modal */
-  .hoso-modal {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-    position: relative;
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
-  
-  /* Nút đóng */
-  .hoso-close-btn {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  /* Avatar */
-  .hoso-avatar {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-  }
-  
-  /* Input */
-  .hoso-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  
-  /* Nút cập nhật */
-  .hoso-submit-btn {
-    width: 100%;
-    background-color: #2563eb;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .hoso-submit-btn:hover {
-    background-color: #1e40af;
-  }
-  
+}

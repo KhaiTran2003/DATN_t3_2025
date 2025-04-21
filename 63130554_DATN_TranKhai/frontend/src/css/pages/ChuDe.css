@@ -1,44 +1,61 @@
+/* File: src/css/pages/ChuDe.css */
+
+/* Các style chung như đã có */
 .accordion-container {
-    max-width: 800px;
-    margin: auto;
-    font-family: Arial;
-  }
-  
-  .accordion-item {
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 5px;
-  }
-  
-  .accordion-header {
-    background-color: #f5f5f5;
-    padding: 14px 20px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .accordion-header:hover {
-    background-color: #eee;
-  }
-  
-  .accordion-content {
-    background-color: #fff;
-    padding: 10px 30px;
-  }
-  
-  .lesson-item {
-    padding: 8px 0;
-    color: #007bff;
-    cursor: pointer;
-  }
-  
-  .lesson-item:hover {
-    text-decoration: underline;
-  }
-  
-  .lesson-count {
-    color: #666;
-    font-size: 0.9rem;
-  }
-  
+  max-width: 800px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 5px;
+}
+
+.accordion-header {
+  background-color: #f5f5f5;
+  padding: 14px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-header:hover {
+  background-color: #eee;
+}
+
+.accordion-content {
+  background-color: #fff;
+  padding: 10px 30px;
+}
+
+.lesson-item {
+  padding: 8px 0;
+  color: #007bff;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.lesson-item:hover {
+  text-decoration: underline;
+}
+
+/* Style cho bài học bị khóa */
+.lesson-item.locked {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.lock-icon {
+  margin-left: 8px;
+  color: #999;
+  font-size: 1.2rem;
+}
+
+.lesson-count {
+  color: #666;
+  font-size: 0.9rem;
+}

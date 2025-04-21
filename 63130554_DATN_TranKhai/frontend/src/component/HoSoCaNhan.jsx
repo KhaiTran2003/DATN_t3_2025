@@ -8,14 +8,17 @@ const HoSoCaNhan = ({ vaiTro, id, onClose }) => {
   const [avatarFile, setAvatarFile] = useState(null);
 
   useEffect(() => {
-    // Lấy thông tin người dùng từ API
     axios.get(`http://localhost:5000/api/hosocanhan/${vaiTro}/${id}`)
       .then(res => {
         setUser(res.data);
-        setAvatarPreview(`/uploads/${vaiTro === 'hocvien' ? 'anhhocvien' : 'anhgiaovien'}/${res.data.avatar}`);
+        if (res.data.avatar) {
+          const folder = vaiTro === 'hocvien' ? 'anhhocvien' : 'anhgiaovien';
+          setAvatarPreview(`http://localhost:5000/uploads/${folder}/${res.data.avatar}`);
+        }
       })
       .catch(err => console.error(err));
   }, [vaiTro, id]);
+  
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });

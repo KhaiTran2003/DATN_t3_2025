@@ -24,6 +24,26 @@ router.get('/danhsachkhoahoc', (req, res) => {
     res.json(results);
   });
 });
+router.get('/thongtinkhoahocfull', (req, res) => {
+  const query = `
+    SELECT kh.*, gv.hoVaTen AS tenGV, 
+           COUNT(bh.maBH) AS soLuongBaiHoc, 
+           IFNULL(SUM(bh.thoiGian), 0) AS tongThoiGian
+    FROM khoahoc kh
+    LEFT JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
+    LEFT JOIN giaovien gv ON kgv.maGV = gv.maGV
+    LEFT JOIN chude cd ON kh.maKH = cd.maKH
+    LEFT JOIN baihoc bh ON cd.maCD = bh.maCD
+    GROUP BY kh.maKH
+    ORDER BY kh.maKH DESC;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Lỗi truy vấn thông tin khóa học đầy đủ' });
+    res.json(results);
+  });
+});
+
 // GET: Danh sách khóa học theo giáo viên
 router.get('/mylistcourse', (req, res) => {
   const maGV = req.query.maGV; // 🟢 truyền từ frontend lên dạng ?maGV=1

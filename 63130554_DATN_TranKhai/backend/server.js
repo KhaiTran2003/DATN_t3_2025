@@ -36,6 +36,9 @@ app.use('/api', dangkyRouter);
 const gvkhRouter = require('./routes/khoahoc_giaovien');
 app.use('/api', gvkhRouter);
 
+const tientrinhRouter = require('./routes/tientrinh');
+app.use('/api', tientrinhRouter);
+
 
 
 // Start server

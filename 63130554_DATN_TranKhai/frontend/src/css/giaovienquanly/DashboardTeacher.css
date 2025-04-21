@@ -1,40 +1,93 @@
 .dashboard-layout {
-    display: flex;
-    min-height: 100vh;
-  }
-  
-  /* Sidebar */
-  .sidebar-teacher {
-    width: 250px;
-    background-color: #1e293b;
-    color: white;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-  }
-  
-  /* Nội dung chính */
-  .dashboard-main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Navbar */
-  .navbar-teacher {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  /* Trang nội dung */
-  .dashboard-page-content {
-    margin-left: 40px;
-    padding: 20px;
-    background-color: #f8fafc;
-    flex: 1;
-  }
-  
+  display: block;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+/* 3. Sidebar cố định */
+.dashboard-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #2f3e52;
+  overflow: auto;
+  z-index: 10;
+}
+
+/* 4. Navbar cố định */
+.navbar-teacher {
+  position: fixed;
+  top: 0;
+  left: 250px;          /* né sidebar */
+  right: 0;
+  height: 64px;         /* hoặc chiều cao thực tế */
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  z-index: 20;
+}
+
+/* 5. Phần chính (Navbar + Content) */
+.dashboard-main {
+  margin-left: 280px;   /* né sidebar */
+  margin-top: 64px;     /* né navbar */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+}
+
+/* 6. Nội dung chính bên dưới navbar */
+.dashboard-content {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 7. Tiêu đề trang */
+.dashboard-content h2 {
+  margin: 0 0 16px;
+  font-size: 28px;
+  color: #111827;
+}
+
+/* 8. Các card thống kê */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.stat-number {
+  font-size: 32px;
+  font-weight: bold;
+  color: #4f46e5;
+}
+.stat-label {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* 9. Container cho biểu đồ */
+.chart-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.chart-container h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #374151;
+}

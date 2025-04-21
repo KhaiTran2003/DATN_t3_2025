@@ -1,78 +1,155 @@
+/* DSBaiHoc.css */
+
+/* --- Layout chung --- */
 .teacher-layout {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f9fafb;
-  }
-  
-  .teacher-main-content {
-    flex: 1;
-    margin-left: 250px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .teacher-page-content {
-    flex: 1;
-    padding: 20px;
-    background-color: #ffffff;
-  }
-  
-  .page-container {
-    padding: 24px;
-  }
-  
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .page-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #111827;
-  }
-  
-  .btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn.add {
-    background-color: #2563eb;
-    color: white;
-  }
-  
-  .btn.add:hover {
-    background-color: #1d4ed8;
-  }
-  
-  .btn.edit {
-    background-color: #e0f2fe;
-    color: #0284c7;
-  }
-  
-  .btn.edit:hover {
-    background-color: #bae6fd;
-  }
-  
-  .btn.delete {
-    background-color: #fee2e2;
-    color: #dc2626;
-  }
-  
-  .btn.delete:hover {
-    background-color: #fecaca;
-  }
-  
-  .action-buttons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
+  display: block;       /* cho sidebar fixed */
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+
+/* Sidebar cố định */
+.teacher-layout .teacher-sidebar,
+.teacher-layout > .teacher-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #2f3e52;
+  z-index: 10;
+}
+
+/* Navbar cố định */
+/* DSBaiHoc.css */
+
+/* Navbar cố định */
+.navbar-teacher {
+  position: fixed;
+  top: 0;
+  left: 250px;   /* bằng width sidebar */
+  right: 0;
+  height: 56px;  /* hoặc chiều cao thực tế của NavbarTeacher */
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  z-index: 20;
+}
+
+
+/* Nội dung chính, tránh sidebar & navbar */
+.teacher-main-content {
+  margin-left: 250px; /* né sidebar */
+  margin-top: 56px;   /* đúng bằng height của .navbar-teacher */
+  /* nếu NavbarTeacher cao hơn, thay bằng giá trị đó */
+  overflow-y: auto;
+}
+
+
+/* Container trang */
+.teacher-page-content {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+}
+
+/* Wrapper padding */
+.page-container {
+  padding: 24px;
+}
+
+/* Header: tiêu đề + nút Thêm */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.page-title {
+  margin: 0;
+  color: #111827;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Nút chung */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+.btn.add {
+  background-color: #2563eb;
+  color: #fff;
+}
+.btn.add:hover {
+  background-color: #1d4ed8;
+}
+.btn.edit {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+.btn.edit:hover {
+  background-color: #bae6fd;
+}
+.btn.delete {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+.btn.delete:hover {
+  background-color: #fecaca;
+}
+
+/* Table container */
+.table-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.table-container .table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-container .table th,
+.table-container .table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+.table-container .table thead th {
+  background: #f0f3f7;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* Các nút hành động trong table */
+.action-buttons,
+.dsbh-action {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Checkbox căn giữa */
+.table-container .table td input[type="checkbox"],
+.table-container .table thead th input[type="checkbox"] {
+  display: block;
+  margin: auto;
+}
+
+/* Phân trang */
+.PhânTrang,
+.paginate-container,
+.dsbh-pagination {
+  margin-top: 16px;
+  text-align: center;
+}

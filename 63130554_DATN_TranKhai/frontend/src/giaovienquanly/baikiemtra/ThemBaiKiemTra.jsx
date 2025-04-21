@@ -53,6 +53,20 @@ const ThemBaiKiemTra = () => {
     ]);
   };
 
+    // Xóa câu hỏi
+  const handleRemoveCauHoi = (qIndex) => {
+    const newList = [...dsCauHoi];
+    newList.splice(qIndex, 1);
+    setDsCauHoi(newList);
+  };
+
+  // Xóa đáp án
+  const handleRemoveDapAn = (qIndex, aIndex) => {
+    const newList = [...dsCauHoi];
+    newList[qIndex].dapAn.splice(aIndex, 1);
+    setDsCauHoi(newList);
+  };
+
   const handleAddDapAn = (qIndex) => {
     const newList = [...dsCauHoi];
     newList[qIndex].dapAn.push({ text: '', dungsai: true });
@@ -131,40 +145,60 @@ const ThemBaiKiemTra = () => {
               </select>
 
               {dsCauHoi.map((ch, qIndex) => (
-                <div key={qIndex} className="them-bkt-box">
-                  <input
-                    type="text"
-                    placeholder="Nội dung câu hỏi"
-                    value={ch.cauHoi}
-                    onChange={(e) => handleCauHoiChange(qIndex, e.target.value)}
-                    required
-                  />
-
-                  <label className="them-bkt-label">Đáp án:</label>
-                  {ch.dapAn.map((da, aIndex) => (
-                    <div key={aIndex} className="them-bkt-dapan-row">
-                      <input
-                        type="radio"
-                        name={`dungsai-${qIndex}`}
-                        checked={!da.dungsai}
-                        onChange={() => handleChonDapAnDung(qIndex, aIndex)}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Nội dung đáp án"
-                        value={da.text}
-                        onChange={(e) => handleDapAnChange(qIndex, aIndex, e.target.value)}
-                        required
-                      />
-                      {!da.dungsai && <span className="dap-an-dung">✓ Đáp án đúng</span>}
-                    </div>
-                  ))}
-
-                  <p className="them-bkt-link" onClick={() => handleAddDapAn(qIndex)}>
-                    + Thêm đáp án
-                  </p>
+              <div key={qIndex} className="them-bkt-box">
+                <div className="box-header">
+                  <h4>Câu hỏi {qIndex + 1}</h4>
+                  <button
+                    type="button"
+                    className="btn-xoa-cauhoi"
+                    onClick={() => handleRemoveCauHoi(qIndex)}
+                  >
+                    🗑️
+                  </button>
                 </div>
-              ))}
+
+                <input
+                  type="text"
+                  placeholder="Nội dung câu hỏi"
+                  value={ch.cauHoi}
+                  onChange={(e) => handleCauHoiChange(qIndex, e.target.value)}
+                  required
+                />
+
+                <label className="them-bkt-label">Đáp án:</label>
+                {ch.dapAn.map((da, aIndex) => (
+                  <div key={aIndex} className="them-bkt-dapan-row">
+                    <input
+                      type="radio"
+                      name={`dungsai-${qIndex}`}
+                      checked={!da.dungsai}
+                      onChange={() => handleChonDapAnDung(qIndex, aIndex)}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Nội dung đáp án"
+                      value={da.text}
+                      onChange={(e) => handleDapAnChange(qIndex, aIndex, e.target.value)}
+                      required
+                    />
+                    {ch.dapAn.length > 1 && (
+                      <button
+                        type="button"
+                        className="btn-xoa-dapan"
+                        onClick={() => handleRemoveDapAn(qIndex, aIndex)}
+                      >
+                        ❌
+                      </button>
+                    )}
+                    {!da.dungsai && <span className="dap-an-dung">✓ Đáp án đúng</span>}
+                  </div>
+                ))}
+                <p className="them-bkt-link" onClick={() => handleAddDapAn(qIndex)}>
+                  + Thêm đáp án
+                </p>
+              </div>
+            ))}
+
 
               <button type="button" className="btn-them-cau-hoi" onClick={handleAddCauHoi}>
                 + Thêm câu hỏi

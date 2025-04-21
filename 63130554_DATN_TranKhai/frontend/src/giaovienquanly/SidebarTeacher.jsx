@@ -8,6 +8,9 @@ const SidebarTeacher = () => {
     <div className="sidebar-teacher">
       <h2 className="sidebar-title">Giáo viên</h2>
       <nav className="sidebar-nav">
+        <NavLink to="/giaovienquanly/dashboard" className="sidebar-link" activeClassName="active">
+          Dashboard
+        </NavLink>
         <NavLink to="/giaovienquanly/khoahoc" className="sidebar-link" activeClassName="active">
           Quản lý khóa học
         </NavLink>
@@ -20,7 +23,7 @@ const SidebarTeacher = () => {
         <NavLink to="/giaovienquanly/cauhoivadapan" className="sidebar-link" activeClassName="active">
           Câu hỏi & Đáp án
         </NavLink>
-        <NavLink to="/teacher/tien-trinh" className="sidebar-link" activeClassName="active">
+        <NavLink to="/giaovienquanly/xemtientrinh" className="sidebar-link" activeClassName="active">
           Tiến trình học viên
         </NavLink>
       </nav>

@@ -11,14 +11,13 @@ router.get('/baihoc', (req, res) => {
     res.json(results);
   });
 });
+
 // GET: Lấy danh sách bài học theo giáo viên
 router.get('/mylistlesson', (req, res) => {
   const maGV = req.query.maGV;
-
   if (!maGV) {
     return res.status(400).json({ error: 'Thiếu mã giáo viên (maGV)' });
   }
-
   const query = `
     SELECT bh.*, cd.tenChuDe
     FROM baihoc bh
@@ -27,13 +26,11 @@ router.get('/mylistlesson', (req, res) => {
     JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
     WHERE kgv.maGV = ?
   `;
-
   db.query(query, [maGV], (err, results) => {
     if (err) return res.status(500).json({ error: 'Lỗi truy vấn bài học theo giáo viên' });
     res.json(results);
   });
 });
-
 
 // GET: Lấy bài học theo maCD (chủ đề)
 router.get('/baihoc/chude/:maCD', (req, res) => {
@@ -56,14 +53,13 @@ router.get('/baihoc/:id', (req, res) => {
 
 // POST: Thêm bài học
 router.post('/thembaihoc', (req, res) => {
-  const { maCD, tenBaiHoc, noiDung, url } = req.body;
-  if (!maCD || !tenBaiHoc || !noiDung) {
+  const { maCD, tenBaiHoc, noiDung, url, thoiGian } = req.body;
+  if (!maCD || !tenBaiHoc || !noiDung || !thoiGian) {
     return res.status(400).json({ error: 'Thiếu dữ liệu bắt buộc' });
   }
-
   db.query(
-    'INSERT INTO baihoc (maCD, tenBaiHoc, noiDung, url) VALUES (?, ?, ?, ?)',
-    [maCD, tenBaiHoc, noiDung, url],
+    'INSERT INTO baihoc (maCD, tenBaiHoc, noiDung, url, thoiGian) VALUES (?, ?, ?, ?, ?)',
+    [maCD, tenBaiHoc, noiDung, url, thoiGian],
     (err, result) => {
       if (err) return res.status(500).json({ error: 'Không thể thêm bài học' });
       res.json({ message: 'Thêm bài học thành công', id: result.insertId });
@@ -74,11 +70,10 @@ router.post('/thembaihoc', (req, res) => {
 // PUT: Sửa bài học
 router.put('/suabaihoc/:id', (req, res) => {
   const { id } = req.params;
-  const { maCD, tenBaiHoc, noiDung, url } = req.body;
-
+  const { maCD, tenBaiHoc, noiDung, url, thoiGian } = req.body;
   db.query(
-    'UPDATE baihoc SET maCD = ?, tenBaiHoc = ?, noiDung = ?, url = ? WHERE maBH = ?',
-    [maCD, tenBaiHoc, noiDung, url, id],
+    'UPDATE baihoc SET maCD = ?, tenBaiHoc = ?, noiDung = ?, url = ?, thoiGian = ? WHERE maBH = ?',
+    [maCD, tenBaiHoc, noiDung, url, thoiGian, id],
     (err) => {
       if (err) return res.status(500).json({ error: 'Không thể cập nhật bài học' });
       res.json({ message: 'Cập nhật bài học thành công' });
@@ -89,11 +84,44 @@ router.put('/suabaihoc/:id', (req, res) => {
 // DELETE: Xoá bài học
 router.delete('/xoabaihoc/:id', (req, res) => {
   const { id } = req.params;
-
   db.query('DELETE FROM baihoc WHERE maBH = ?', [id], (err) => {
     if (err) return res.status(500).json({ error: 'Không thể xoá bài học' });
     res.json({ message: 'Xoá bài học thành công' });
   });
 });
 
+// GET: Lấy danh sách bài học theo maKH (khóa học)
+router.get('/baihoc/khoahoc/:maKH', (req, res) => {
+  const { maKH } = req.params;
+  const query = `
+    SELECT bh.* 
+    FROM baihoc bh
+    JOIN chude cd ON bh.maCD = cd.maCD
+    WHERE cd.maKH = ?
+  `;
+  db.query(query, [maKH], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Lỗi khi lấy danh sách bài học theo mã khóa học' });
+    }
+    res.json(results);
+  });
+});
+
+
+// Post lấy ds bài học theo khóa học của học viên
+router.post('/baihoc/tinhtrang',(req,res)=>{
+  const data = req.body;
+  const query = `
+    SELECT bh.*, t.tinhTrang
+    FROM baihoc bh
+    LEFT JOIN tientrinh t ON bh.maBH = t.maBH AND t.maHV = ?
+    WHERE bh.maCD = ?
+  `;
+  db.query(query, [data.maHV,data.maCD], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Lỗi khi lấy danh sách bài học theo mã khóa học' });
+    }
+    res.json(results);
+  });
+});
 module.exports = router;

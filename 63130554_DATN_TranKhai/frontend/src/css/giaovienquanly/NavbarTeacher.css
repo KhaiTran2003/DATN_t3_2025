@@ -1,5 +1,6 @@
 /* ========== Navbar chính ========= */
 .navbar-teacher {
+  position: fixed;
     height: 64px;
     background: #ffffff;
     border-bottom: 1px solid #eee;

@@ -1,0 +1,65 @@
+
+/* Trang BaiHoc tổng thể */
+.baihoc-page-baihoc {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Container của nút Home */
+.back-button-container-baihoc {
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Nút Home */
+.back-button-baihoc {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.back-button-baihoc:hover {
+  color: #004494;
+}
+
+/* Container chính của trang với layout hai cột */
+.baihoc-container {
+  display: flex;
+  height: calc(100vh - 70px); /* Giảm chiều cao theo chiều cao của nút Home */
+  background-color: #f8f9fa;
+}
+
+/* Cột trái: Nội dung bài học hoặc Quiz */
+.baihoc-content {
+  flex: 1;
+  padding: 24px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Cột phải: Sidebar chứa danh sách chủ đề */
+.baihoc-sidebar {
+  width: 30%;
+  background-color: #ffffff;
+  border-left: 1px solid #e0e0e0;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .baihoc-container {
+    flex-direction: column;
+  }
+  .baihoc-sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 16px;
+  }
+}

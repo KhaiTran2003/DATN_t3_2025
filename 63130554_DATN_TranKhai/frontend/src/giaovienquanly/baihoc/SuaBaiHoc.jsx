@@ -3,18 +3,21 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import '../../css/giaovienquanly/BaiHoc.css';
 
 const SuaBaiHoc = () => {
-  const { id } = useParams(); // maBH
+  const { id } = useParams(); // maBH của bài học
   const navigate = useNavigate();
 
   const [danhSachChuDe, setDanhSachChuDe] = useState([]);
   const [baiHoc, setBaiHoc] = useState({
     tenBaiHoc: '',
-    noiDung: '',
+    noiDung: '',    // Nội dung sẽ là HTML được soạn bằng CKEditor
     url: '',
-    maCD: ''
+    maCD: '',
+    thoiGian: ''   // Thời gian (phút)
   });
 
   useEffect(() => {
@@ -26,12 +29,12 @@ const SuaBaiHoc = () => {
       return;
     }
 
-    // Lấy danh sách chủ đề
+    // Lấy danh sách chủ đề của giáo viên
     axios.get(`http://localhost:5000/api/mylisttopic?maGV=${maGV}`)
       .then(res => setDanhSachChuDe(res.data))
       .catch(err => console.error('Lỗi khi lấy chủ đề:', err));
 
-    // Lấy bài học cần sửa
+    // Lấy thông tin bài học cần chỉnh sửa
     axios.get(`http://localhost:5000/api/baihoc/${id}`)
       .then(res => setBaiHoc(res.data))
       .catch(err => {
@@ -54,7 +57,8 @@ const SuaBaiHoc = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!baiHoc.tenBaiHoc.trim() || !baiHoc.noiDung.trim() || !baiHoc.maCD) {
+    // Kiểm tra các trường bắt buộc: tên bài học, nội dung, chủ đề và thời gian
+    if (!baiHoc.tenBaiHoc.trim() || !baiHoc.noiDung.trim() || !baiHoc.maCD || !baiHoc.thoiGian.toString().trim()) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
     }
@@ -62,9 +66,10 @@ const SuaBaiHoc = () => {
     try {
       await axios.put(`http://localhost:5000/api/suabaihoc/${id}`, {
         tenBaiHoc: baiHoc.tenBaiHoc.trim(),
-        noiDung: baiHoc.noiDung.trim(),
+        noiDung: baiHoc.noiDung,  // Nội dung dạng HTML từ CKEditor
         url: baiHoc.url?.trim() || '',
-        maCD: baiHoc.maCD
+        maCD: baiHoc.maCD,
+        thoiGian: baiHoc.thoiGian
       });
 
       alert('✅ Cập nhật bài học thành công!');
@@ -96,11 +101,16 @@ const SuaBaiHoc = () => {
                 />
 
                 <label>Nội dung</label>
-                <textarea
-                  rows="4"
-                  value={baiHoc.noiDung}
-                  onChange={(e) => handleChange('noiDung', e.target.value)}
-                  required
+                <CKEditor
+                  editor={ClassicEditor}
+                  data={baiHoc.noiDung}
+                  onChange={(event, editor) => {
+                    const data = editor.getData();
+                    handleChange('noiDung', data);
+                  }}
+                  config={{
+                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ]
+                  }}
                 />
 
                 <label>Link YouTube (nếu có)</label>
@@ -124,8 +134,20 @@ const SuaBaiHoc = () => {
                   </div>
                 )}
 
+                <label>Thời gian (phút)</label>
+                <input
+                  type="number"
+                  value={baiHoc.thoiGian}
+                  onChange={(e) => handleChange('thoiGian', e.target.value)}
+                  required
+                />
+
                 <label>Đổi sang chủ đề khác (nếu muốn)</label>
-                <select value={baiHoc.maCD} onChange={(e) => handleChange('maCD', e.target.value)} required>
+                <select
+                  value={baiHoc.maCD}
+                  onChange={(e) => handleChange('maCD', e.target.value)}
+                  required
+                >
                   <option value="">-- Chọn chủ đề --</option>
                   {danhSachChuDe.map((cd) => (
                     <option key={cd.maCD} value={cd.maCD}>

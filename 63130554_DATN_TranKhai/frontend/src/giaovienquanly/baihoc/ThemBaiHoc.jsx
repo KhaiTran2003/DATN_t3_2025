@@ -3,6 +3,8 @@ import axios from 'axios';
 import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
 import { useNavigate } from 'react-router-dom';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import '../../css/giaovienquanly/BaiHoc.css';
 
 const ThemBaiHoc = () => {
@@ -10,7 +12,7 @@ const ThemBaiHoc = () => {
   const [maCD, setMaCD] = useState('');
   const [danhSachChuDe, setDanhSachChuDe] = useState([]);
   const [dsBaiHoc, setDsBaiHoc] = useState([
-    { tenBaiHoc: '', noiDung: '', url: '' }
+    { tenBaiHoc: '', noiDung: '', url: '', thoiGian: '' }
   ]);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const ThemBaiHoc = () => {
   }, []);
 
   const handleAddBaiHoc = () => {
-    setDsBaiHoc([...dsBaiHoc, { tenBaiHoc: '', noiDung: '', url: '' }]);
+    setDsBaiHoc([...dsBaiHoc, { tenBaiHoc: '', noiDung: '', url: '', thoiGian: '' }]);
   };
 
   const handleRemoveBaiHoc = (index) => {
@@ -60,10 +62,12 @@ const ThemBaiHoc = () => {
       return;
     }
 
-    const hasEmpty = dsBaiHoc.some(
-      (bh) => !bh.tenBaiHoc.trim() || !bh.noiDung.trim()
+    // Kiểm tra rằng mỗi bài học có đủ thông tin (tên bài học, nội dung, thời gian)
+    const hasEmpty = dsBaiHoc.some(bh =>
+      !bh.tenBaiHoc.trim() ||
+      !bh.noiDung.trim() || // Nội dung là HTML string từ CKEditor
+      !bh.thoiGian.toString().trim()
     );
-
     if (hasEmpty) {
       alert('Vui lòng nhập đầy đủ thông tin cho tất cả bài học!');
       return;
@@ -74,8 +78,9 @@ const ThemBaiHoc = () => {
         await axios.post('http://localhost:5000/api/thembaihoc', {
           maCD,
           tenBaiHoc: bh.tenBaiHoc.trim(),
-          noiDung: bh.noiDung.trim(),
-          url: bh.url?.trim() || null
+          noiDung: bh.noiDung, // Nội dung dạng HTML từ CKEditor
+          url: bh.url?.trim() || null,
+          thoiGian: bh.thoiGian
         });
       }
       alert(`✅ Đã thêm ${dsBaiHoc.length} bài học thành công!`);
@@ -111,7 +116,7 @@ const ThemBaiHoc = () => {
                 const youtubeId = extractYouTubeId(bh.url);
                 return (
                   <div key={index} className="form-group-baihoc lesson-block-baihoc">
-                    <h3>Bài học {index + 1}</h3>
+                    <h3>Bài học thứ {index + 1}</h3>
                     <input
                       type="text"
                       placeholder="Tên bài học"
@@ -119,19 +124,34 @@ const ThemBaiHoc = () => {
                       onChange={(e) => handleChange(index, 'tenBaiHoc', e.target.value)}
                       required
                     />
-                    <textarea
-                      placeholder="Nội dung bài học"
-                      rows="4"
-                      value={bh.noiDung}
-                      onChange={(e) => handleChange(index, 'noiDung', e.target.value)}
-                      required
+
+                    <label>Nội dung bài học</label>
+                    <CKEditor
+                      editor={ ClassicEditor }
+                      data={bh.noiDung}
+                      onChange={(event, editor) => {
+                        const data = editor.getData();
+                        handleChange(index, 'noiDung', data);
+                      }}
+                      config={{
+                        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ]
+                      }}
                     />
+
                     <input
                       type="text"
                       placeholder="Link YouTube (nếu có)"
                       value={bh.url}
                       onChange={(e) => handleChange(index, 'url', e.target.value)}
                     />
+                    <input
+                      type="number"
+                      placeholder="Thời gian (phút)"
+                      value={bh.thoiGian}
+                      onChange={(e) => handleChange(index, 'thoiGian', e.target.value)}
+                      required
+                    />
+
                     {youtubeId && (
                       <div className="video-preview-baihoc">
                         <iframe
@@ -145,6 +165,7 @@ const ThemBaiHoc = () => {
                         ></iframe>
                       </div>
                     )}
+                    
                     {dsBaiHoc.length > 1 && (
                       <button type="button" className="btn-baihoc delete" onClick={() => handleRemoveBaiHoc(index)}>
                         🗑️ Xoá bài học
@@ -153,7 +174,7 @@ const ThemBaiHoc = () => {
                   </div>
                 );
               })}
-
+              
               <div className="form-actions-baihoc">
                 <button type="button" className="btn-baihoc add" onClick={handleAddBaiHoc}>
                   + Thêm bài học

@@ -1,64 +1,118 @@
-.chi-tiet-wrapper {
-    padding: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  
-  .chi-tiet-banner img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .chi-tiet-content h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e3a8a;
-    margin-bottom: 1rem;
-  }
-  
-  .mo-ta {
-    font-size: 1rem;
-    color: #374151;
-    margin-bottom: 1.5rem;
-  }
-  
-  .chi-tiet-info-box {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    background-color: #f3f4f6;
-    padding: 1rem;
-    border-radius: 0.75rem;
-    margin-bottom: 2rem;
-  }
-  
-  .btn-primary {
-    padding: 0.75rem 2rem;
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  
-  .btn-primary:hover {
-    background-color: #1e40af;
-  }
-  .btn-hoc-ngay {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-hoc-ngay:hover {
-    background-color: #218838;
-  }
+/* ChiTietKhoaHoc.css */
+
+/* Header chứa nút quay lại được đặt ở góc trên bên trái, không có nền hay bóng đổ */
+.course-detail-header {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.back-button:hover {
+  color: #0056b3;
+}
+
+/* Container chính của trang chi tiết khóa học */
+.course-detail-container {
+  max-width: 1100px;
+  margin: 80px auto 0;  /* Đặt margin-top cao hơn để không bị che bởi header cố định */
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Banner hiển thị hình ảnh khóa học */
+.course-banner img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Nội dung chi tiết khóa học */
+.course-content {
+  padding: 1.5rem 2rem;
+}
+
+.course-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.course-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+/* Box chứa các thông tin bổ sung của khóa học */
+.course-info-box {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.info-item {
+  flex: 1 1 30%;
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Nút hành động */
+.course-action {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.btn-enroll-course,
+.btn-enter-course {
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-enroll-course {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.btn-enroll-course:hover {
+  background-color: #218838;
+}
+
+.btn-enter-course {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.btn-enter-course:hover {
+  background-color: #e0a800;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}

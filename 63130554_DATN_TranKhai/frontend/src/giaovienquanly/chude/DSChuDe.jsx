@@ -9,8 +9,8 @@ import '../../css/giaovienquanly/DSChuDe.css';
 
 const DSChuDe = () => {
   const [chuDe, setChuDe] = useState([]);
+  const [originalChuDe, setOriginalChuDe] = useState([]);
   const [khoaHoc, setKhoaHoc] = useState([]);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
@@ -24,16 +24,33 @@ const DSChuDe = () => {
       return;
     }
   
-    // Gọi song song cả 2 API
+    // Gọi song song cả 2 API: lấy thông tin khóa học và chủ đề do giáo viên quản lý
     axios.get(`http://localhost:5000/api/mylistcourse?maGV=${maGV}`)
       .then((res) => setKhoaHoc(res.data))
       .catch((err) => console.error('Lỗi khi load khóa học:', err));
   
     axios.get(`http://localhost:5000/api/mylisttopic?maGV=${maGV}`)
-      .then((res) => setChuDe(res.data))
+      .then((res) => {
+        setChuDe(res.data);
+        setOriginalChuDe(res.data);
+      })
       .catch((err) => console.error('Lỗi khi load chủ đề:', err));
   }, []);
   
+  // Hàm lọc chủ đề theo từ khóa (tìm kiếm theo tên chủ đề hoặc tên khóa học)
+  const handleSearchChange = (event) => {
+    const keyword = event.target.value.toLowerCase().trim();
+    setCurrentPage(1);
+    if (!keyword) {
+      setChuDe(originalChuDe);
+      return;
+    }
+    const filtered = originalChuDe.filter(topic =>
+      (topic.tenChuDe && topic.tenChuDe.toLowerCase().includes(keyword)) ||
+      (topic.tenKhoaHoc && topic.tenKhoaHoc.toLowerCase().includes(keyword))
+    );
+    setChuDe(filtered);
+  };
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Bạn có chắc muốn xoá chủ đề này không?');
@@ -42,6 +59,7 @@ const DSChuDe = () => {
     try {
       await axios.delete(`http://localhost:5000/api/xoachude/${id}`);
       setChuDe(prev => prev.filter(cd => cd.maCD !== id));
+      setOriginalChuDe(prev => prev.filter(cd => cd.maCD !== id));
       alert('Xoá thành công!');
     } catch (err) {
       console.error('Lỗi khi xoá:', err);
@@ -84,7 +102,8 @@ const DSChuDe = () => {
     <div className="teacher-layout">
       <SidebarTeacher />
       <div className="teacher-main-content">
-        <NavbarTeacher />
+        {/* Truyền hàm handleSearchChange xuống NavbarTeacher */}
+        <NavbarTeacher handleSearchChange={handleSearchChange} />
         <div className="teacher-page-content">
           <div className="page-container">
             <div className="page-header">

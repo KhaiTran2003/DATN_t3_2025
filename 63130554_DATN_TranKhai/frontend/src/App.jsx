@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import DSKhoaHoc from './giaovienquanly/khoahoc/dskhoahoc';
 import ThemKhoaHoc from './giaovienquanly/khoahoc/themkhoahoc';
 import SuaKhoaHoc from './giaovienquanly/khoahoc/SuaKhoaHoc';
-import Home from './pages/home';
+import Home from './pages/Home';
 import ChiTietKhoaHoc from './pages/ChiTietKhoaHoc';
 import DangKy from './component/DangKy';
 import DangKyGiaoVien from './component/DangKyGiaovien';
@@ -18,18 +18,23 @@ import SuaChuDe from './giaovienquanly/chude/SuaChuDe';
 import ThemBaiHoc from './giaovienquanly/baihoc/ThemBaiHoc';
 import SuaBaiHoc from './giaovienquanly/baihoc/SuaBaiHoc';
 import ThemBaiKiemTra from './giaovienquanly/baikiemtra/ThemBaiKiemTra';
+import BaiHoc from './pages/BaiHoc';
+import ChiTietBaiHoc from './pages/ChiTietBaiHoc';
+import FinalResult from './pages/FinalResult';
+import XemTienTrinhHV from './giaovienquanly/tientrinh/XemTienTrinhHV';
 function App() {
   return (
     <Router>
       <Routes>
-      <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/giaovienquanly/khoahoc" element={<DSKhoaHoc />} />
         <Route path="/khoahoc/chitietkhoahoc/:id" element={<ChiTietKhoaHoc />} />
         <Route path="/giaovienquanly/khoahoc/them" element={<ThemKhoaHoc />} />
         <Route path="/giaovienquanly/danhsachchude" element={<DSChuDe />} />
         <Route path="/giaovienquanly/danhsachbaihoc" element={<DSBaiHoc />} />
         <Route path="/giaovienquanly/cauhoivadapan" element={<BaiKiemTra />} />
-        <Route path="/giaovienquanly/dashboardteacher" element={<DashboardTeacher />} />
+        <Route path="/giaovienquanly/xemtientrinh" element={<XemTienTrinhHV />} />
+        <Route path="/giaovienquanly/dashboard" element={<DashboardTeacher />} />
         <Route path="/giaovienquanly/khoahoc/sua/:id" element={<SuaKhoaHoc />} />
 
         <Route path="/giaovienquanly/chude/themchude" element={<ThemChuDe />} />
@@ -37,8 +42,19 @@ function App() {
 
         <Route path="/giaovienquanly/baihoc/thembaihoc" element={<ThemBaiHoc />} />
         <Route path="/giaovienquanly/baihoc/suabaihoc/:id" element={<SuaBaiHoc />} />
+        <Route path="/khoahoc/:maKH/baihoc/:maBH" element={<ChiTietBaiHoc />} />
+
+
 
         <Route path="/giaovienquanly/baikiemtra/thembaikiemtra" element={<ThemBaiKiemTra />} />
+
+        <Route path="/khoahoc/:maKH/baihoc" element={<BaiHoc />} />
+
+
+        <Route path="/final-result" element={<FinalResult />} />
+
+
+
 
         <Route path="/hosocanhan/:id" element={<HoSoCaNhan />} />
         <Route path="/hosocanhan/:id" element={<SuaKhoaHoc />} />

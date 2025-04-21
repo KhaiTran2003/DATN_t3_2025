@@ -5,7 +5,7 @@ import '../css/giaovienquanly/NavbarTeacher.css';
 import { useNavigate } from 'react-router-dom';
 import HoSoCaNhan from '../component/HoSoCaNhan';
 
-const NavbarTeacher = () => {
+const NavbarTeacher = ({ handleSearchChange }) => {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -57,7 +57,12 @@ const NavbarTeacher = () => {
           <h2 className="navbar-brand-teacher">LCMS</h2>
           <div className="search-box-teacher">
             <FaSearch />
-            <input type="text" placeholder="Tìm kiếm..." />
+            {/* Gắn onChange từ prop handleSearchChange (nếu có) */}
+            <input
+              type="text"
+              placeholder="Tìm kiếm..."
+              onChange={handleSearchChange}
+            />
           </div>
         </div>
 

@@ -4,11 +4,12 @@ import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
 import Table from '../../component/table';
 import PhanTrang from '../../component/PhanTrang';
-import '../../css/giaovienquanly/DSKhoahoc.css'; 
+import '../../css/giaovienquanly/DSKhoahoc.css';
 import { useNavigate } from 'react-router-dom';
 
 const BaiKiemTra = () => {
   const [cauHoiList, setCauHoiList] = useState([]);
+  const [originalCauHoiList, setOriginalCauHoiList] = useState([]);
   const [dapanMap, setDapanMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -21,14 +22,17 @@ const BaiKiemTra = () => {
     const { maGV } = JSON.parse(userGV);
     if (!maGV) return;
 
-    axios.get(`http://localhost:5000/api/mylistquestion?maGV=${maGV}`)
+    axios
+      .get(`http://localhost:5000/api/mylistquestion?maGV=${maGV}`)
       .then((res) => {
         setCauHoiList(res.data);
+        setOriginalCauHoiList(res.data);
         loadDapAnTheoCauHoi(res.data);
       })
       .catch((err) => console.error('Lỗi lấy câu hỏi:', err));
   }, []);
 
+  // Hàm load đáp án theo từng câu hỏi
   const loadDapAnTheoCauHoi = async (listCauHoi) => {
     const map = {};
     for (const ch of listCauHoi) {
@@ -41,6 +45,21 @@ const BaiKiemTra = () => {
       }
     }
     setDapanMap(map);
+  };
+
+  // Hàm tìm kiếm: lọc theo tên bài học và nội dung câu hỏi
+  const handleSearchChange = (event) => {
+    const keyword = event.target.value.toLowerCase().trim();
+    setCurrentPage(1);
+    if (!keyword) {
+      setCauHoiList(originalCauHoiList);
+      return;
+    }
+    const filtered = originalCauHoiList.filter((ch) =>
+      (ch.tenBaiHoc && ch.tenBaiHoc.toLowerCase().includes(keyword)) ||
+      (ch.cauHoi && ch.cauHoi.toLowerCase().includes(keyword))
+    );
+    setCauHoiList(filtered);
   };
 
   const totalPages = Math.ceil(cauHoiList.length / itemsPerPage);
@@ -67,8 +86,8 @@ const BaiKiemTra = () => {
                 <input
                   type="radio"
                   name={`cauhoi-${row.maCH}`}
-                  checked={!da.dungsai}  // Đáp án đúng được đánh dấu là !dungsai
-                  disabled                 // Không cho thay đổi lựa chọn
+                  checked={!da.dungsai} // Đáp án đúng được đánh dấu với giá trị false của thuộc tính dungsai
+                  disabled
                 />
                 {String.fromCharCode(65 + idx)}. {da.dapAn}
               </label>
@@ -83,21 +102,20 @@ const BaiKiemTra = () => {
     <div className="teacher-layout">
       <SidebarTeacher />
       <div className="teacher-main-content">
-        <NavbarTeacher />
+        {/* Truyền handleSearchChange xuống NavbarTeacher */}
+        <NavbarTeacher handleSearchChange={handleSearchChange} />
         <div className="teacher-page-content">
           <div className="page-container">
             <div className="page-header">
               <h1 className="page-title">Bài kiểm tra</h1>
-              <button 
-                className="btn add" 
+              <button
+                className="btn add"
                 onClick={() => navigate('/giaovienquanly/baikiemtra/thembaikiemtra')}
               >
                 + Thêm bài kiểm tra
               </button>
             </div>
-
             <Table data={paginatedData} columns={columns} />
-
             <PhanTrang
               currentPage={currentPage}
               totalPages={totalPages}

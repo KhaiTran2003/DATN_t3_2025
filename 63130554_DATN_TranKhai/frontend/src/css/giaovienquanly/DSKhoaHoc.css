@@ -20,7 +20,10 @@
   .page-container {
     padding: 24px;
   }
-  
+  .page-container-tthv{
+    margin-left: 50px;     /* bằng đúng độ rộng của sidebar */
+
+  }
   .page-header {
     display: flex;
     justify-content: space-between;
