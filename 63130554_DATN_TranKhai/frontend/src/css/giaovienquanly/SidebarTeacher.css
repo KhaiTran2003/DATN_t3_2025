@@ -41,4 +41,19 @@
     background-color: #38bdf8;
     color: white;
   }
+  @media (max-width: 768px) {
+    .sidebar-teacher {
+      width: 200px;
+      padding: 16px;
+    }
+  
+    .sidebar-title {
+      font-size: 18px;
+    }
+  
+    .sidebar-link {
+      font-size: 14px;
+      padding: 6px 10px;
+    }
+  }
   

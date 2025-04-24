@@ -1,11 +1,43 @@
 import React from 'react';
-import '../css/component/PhanTrang.css'
-const PhanTrang = ({ currentPage, totalPages, onPageChange }) => {
-  const pages = [];
+import '../css/component/PhanTrang.css';
 
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push(i);
-  }
+const PhanTrang = ({ currentPage, totalPages, onPageChange }) => {
+  const getPageItems = () => {
+    const pages = [];
+
+    // Nếu tổng trang nhỏ, hiển thị hết
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      // Show left ellipsis if needed
+      if (currentPage > 4) {
+        pages.push('...');
+      }
+
+      // Determine start and end around current page
+      const start = Math.max(2, currentPage - 2);
+      const end = Math.min(totalPages - 1, currentPage + 2);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      // Show right ellipsis if needed
+      if (currentPage < totalPages - 3) {
+        pages.push('...');
+      }
+
+      // Always show last page
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
+  const pages = getPageItems();
 
   return (
     <div className="pagination">
@@ -16,15 +48,21 @@ const PhanTrang = ({ currentPage, totalPages, onPageChange }) => {
       >
         «
       </button>
-      {pages.map((page) => (
-        <button
-          key={page}
-          className={`pagination-button ${page === currentPage ? 'active' : ''}`}
-          onClick={() => onPageChange(page)}
-        >
-          {page}
-        </button>
+
+      {pages.map((page, idx) => (
+        page === '...' ? (
+          <span key={idx} className="pagination-ellipsis">…</span>
+        ) : (
+          <button
+            key={page}
+            className={`pagination-button ${page === currentPage ? 'active' : ''}`}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </button>
+        )
       ))}
+
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}

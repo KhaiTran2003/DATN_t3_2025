@@ -127,7 +127,7 @@ const ThemBaiKiemTra = () => {
 
         <div className="teacher-page-content">
           <div className="them-bkt-container">
-            <h2 className="them-bkt-title">Thêm / Cập nhật câu hỏi & đáp án</h2>
+            <h2 className="them-bkt-title">Thêm câu hỏi & đáp án</h2>
             <form onSubmit={handleSubmit}>
               {/* Sử dụng danh sách bài học của giáo viên đã lấy từ API */}
               <select

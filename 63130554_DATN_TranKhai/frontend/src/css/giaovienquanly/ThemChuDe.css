@@ -1,0 +1,143 @@
+/* ThemChuDe.css */
+
+.teacher-layout-cd {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f7fa;
+}
+
+.teacher-main-content-cd {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.teacher-page-content-cd {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.page-container-cd {
+    /* Căn giữa ngang và đẩy xuống dưới 100px */
+    margin: 100px auto 0;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.page-header-cd {
+    margin-bottom: 1.5rem;
+}
+
+.page-header-cd .page-title-cd {
+    font-size: 1.75rem;
+    color: #333;
+    margin: 0;
+}
+
+.form-container-cd {
+    width: 100%;
+}
+
+.form-fields-cd .form-group-cd {
+    margin-bottom: 1.25rem;
+}
+
+.form-fields-cd .form-group-cd label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-fields-cd .form-group-cd select,
+.form-fields-cd .form-group-cd input[type="text"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color .2s;
+}
+
+.form-fields-cd .form-group-cd select:focus,
+.form-fields-cd .form-group-cd input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.form-fields-cd .form-group-cd > div {
+    display: flex;
+    align-items: center;
+}
+
+.form-fields-cd .form-group-cd > div input[type="text"] {
+    flex: 1;
+}
+
+.form-fields-cd .form-group-cd > div button {
+    margin-left: 0.5rem;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #e74c3c;
+}
+
+.form-fields-cd .form-group-cd > button {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.form-fields-cd .form-group-cd > button:hover {
+    background: #0056b3;
+}
+
+.form-actions-cd.full {
+    text-align: right;
+    margin-top: 2rem;
+}
+
+.form-actions-cd.full button {
+    background: #28a745;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.form-actions-cd.full button:hover {
+    background: #1e7e34;
+}
+
+/* Responsive: điều chỉnh trên màn hình nhỏ */
+@media (max-width: 768px) {
+    .teacher-page-content-cd {
+        padding: 1rem;
+    }
+    .page-container-cd {
+        margin: 20px 1rem 0;
+        max-width: none;
+        padding: 1.5rem;
+    }
+    .page-header-cd .page-title-cd {
+        font-size: 1.5rem;
+    }
+    .form-actions-cd.full {
+        margin-top: 1.5rem;
+    }
+}

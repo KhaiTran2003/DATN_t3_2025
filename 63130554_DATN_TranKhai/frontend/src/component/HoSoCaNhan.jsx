@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/component/HoSoCaNhan.css';
 
-const HoSoCaNhan = ({ vaiTro, id, onClose }) => {
+const HoSoCaNhan = ({ vaiTro, id, onClose, onUpdate }) => {
   const [user, setUser] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -19,7 +19,6 @@ const HoSoCaNhan = ({ vaiTro, id, onClose }) => {
       .catch(err => console.error(err));
   }, [vaiTro, id]);
   
-
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -41,16 +40,34 @@ const HoSoCaNhan = ({ vaiTro, id, onClose }) => {
     if (avatarFile) formData.append('avatar', avatarFile);
 
     try {
-      await axios.put(`http://localhost:5000/api/capnhathoso/${vaiTro}/${id}`, formData);
+      const res = await axios.put(
+        `http://localhost:5000/api/capnhathoso/${vaiTro}/${id}`,
+        formData
+      );
+      const updatedUser = res.data;
+
+      // Cập nhật avatarPreview nếu có avatar mới
+      if (updatedUser.avatar) {
+        const folder = vaiTro === 'hocvien' ? 'anhhocvien' : 'anhgiaovien';
+        const newUrl = `http://localhost:5000/uploads/${folder}/${updatedUser.avatar}`;
+        setAvatarPreview(newUrl);
+      }
+
+      // Thông báo parent hoặc global listener
+      if (typeof onUpdate === 'function') {
+        onUpdate(updatedUser);
+      }
+      window.dispatchEvent(new Event('profileUpdated'));
+
       alert('Cập nhật thành công!');
-      onClose(); // Đóng modal sau khi cập nhật
+      onClose();
     } catch (error) {
       alert('Cập nhật thất bại!');
       console.error(error);
     }
   };
 
-  if (!user) return null; // Nếu chưa có dữ liệu người dùng, không hiển thị form
+  if (!user) return null;
 
   return (
     <div className="hoso-overlay">
@@ -63,7 +80,6 @@ const HoSoCaNhan = ({ vaiTro, id, onClose }) => {
             <input type="file" onChange={handleAvatarChange} />
           </div>
 
-          {/* Hiển thị thông tin người dùng */}
           <input
             type="text"
             name="hoVaTen"

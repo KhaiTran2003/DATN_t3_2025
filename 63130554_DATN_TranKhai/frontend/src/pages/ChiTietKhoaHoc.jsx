@@ -84,7 +84,7 @@ function ChiTietKhoaHoc() {
       {/* Header chỉ chứa nút quay lại */}
       <header className="course-detail-header">
         <button className="back-button" onClick={() => navigate(-1)}>
-          &larr;
+          &larr;  
         </button>
       </header>
 

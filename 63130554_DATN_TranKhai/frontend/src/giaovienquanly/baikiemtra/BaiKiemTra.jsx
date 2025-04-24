@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
 import Table from '../../component/table';
 import PhanTrang from '../../component/PhanTrang';
 import '../../css/giaovienquanly/DSKhoahoc.css';
-import { useNavigate } from 'react-router-dom';
 
 const BaiKiemTra = () => {
   const [cauHoiList, setCauHoiList] = useState([]);
@@ -18,7 +18,6 @@ const BaiKiemTra = () => {
   useEffect(() => {
     const userGV = localStorage.getItem('userGV');
     if (!userGV) return;
-
     const { maGV } = JSON.parse(userGV);
     if (!maGV) return;
 
@@ -32,7 +31,6 @@ const BaiKiemTra = () => {
       .catch((err) => console.error('Lỗi lấy câu hỏi:', err));
   }, []);
 
-  // Hàm load đáp án theo từng câu hỏi
   const loadDapAnTheoCauHoi = async (listCauHoi) => {
     const map = {};
     for (const ch of listCauHoi) {
@@ -47,7 +45,7 @@ const BaiKiemTra = () => {
     setDapanMap(map);
   };
 
-  // Hàm tìm kiếm: lọc theo tên bài học và nội dung câu hỏi
+  // Search by lesson name or question content
   const handleSearchChange = (event) => {
     const keyword = event.target.value.toLowerCase().trim();
     setCurrentPage(1);
@@ -55,11 +53,27 @@ const BaiKiemTra = () => {
       setCauHoiList(originalCauHoiList);
       return;
     }
-    const filtered = originalCauHoiList.filter((ch) =>
-      (ch.tenBaiHoc && ch.tenBaiHoc.toLowerCase().includes(keyword)) ||
-      (ch.cauHoi && ch.cauHoi.toLowerCase().includes(keyword))
-    );
+    const filtered = originalCauHoiList.filter((ch) => {
+      const lesson = ch.tenBaiHoc?.toLowerCase() || '';
+      const question = ch.cauHoi?.toLowerCase() || '';
+      return lesson.includes(keyword) || question.includes(keyword);
+    });
     setCauHoiList(filtered);
+  };
+
+  const handleEdit = (maCH) => navigate(`/giaovienquanly/baikiemtra/suabaikiemtra/${maCH}`);
+  const handleDelete = async (maCH) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xoá câu hỏi này không?')) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/xoacauhoi/${maCH}`);
+      const updated = cauHoiList.filter(ch => ch.maCH !== maCH);
+      setCauHoiList(updated);
+      setOriginalCauHoiList(updated);
+      alert('Xoá thành công!');
+    } catch (err) {
+      console.error('Lỗi khi xoá câu hỏi:', err);
+      alert('Không thể xoá câu hỏi!');
+    }
   };
 
   const totalPages = Math.ceil(cauHoiList.length / itemsPerPage);
@@ -72,13 +86,13 @@ const BaiKiemTra = () => {
     {
       label: 'Tên bài học',
       key: 'tenBaiHoc',
-      render: (value, row) => row.tenBaiHoc || ''
+      render: (_, row) => row.tenBaiHoc || ''
     },
     { label: 'Câu hỏi', key: 'cauHoi' },
     {
       label: 'Đáp án',
       key: 'maCH',
-      render: (value, row) => (
+      render: (_, row) => (
         <ul className="answer-list">
           {(dapanMap[row.maCH] || []).map((da, idx) => (
             <li key={da.maDA} className="answer-item">
@@ -86,14 +100,28 @@ const BaiKiemTra = () => {
                 <input
                   type="radio"
                   name={`cauhoi-${row.maCH}`}
-                  checked={!da.dungsai} // Đáp án đúng được đánh dấu với giá trị false của thuộc tính dungsai
+                  checked={!da.dungsai}
                   disabled
-                />
+                />{' '}
                 {String.fromCharCode(65 + idx)}. {da.dapAn}
               </label>
             </li>
           ))}
         </ul>
+      )
+    },
+    {
+      label: 'Thao tác',
+      key: 'actions',
+      render: (_, row) => (
+        <div className="action-buttons">
+          <button className="btn edit" onClick={() => handleEdit(row.maCH)}>
+            ✏️ Sửa
+          </button>
+          <button className="btn delete" onClick={() => handleDelete(row.maCH)}>
+            ❌ Xóa
+          </button>
+        </div>
       )
     }
   ];
@@ -102,7 +130,6 @@ const BaiKiemTra = () => {
     <div className="teacher-layout">
       <SidebarTeacher />
       <div className="teacher-main-content">
-        {/* Truyền handleSearchChange xuống NavbarTeacher */}
         <NavbarTeacher handleSearchChange={handleSearchChange} />
         <div className="teacher-page-content">
           <div className="page-container">

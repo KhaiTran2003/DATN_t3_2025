@@ -25,24 +25,35 @@ router.get('/danhsachkhoahoc', (req, res) => {
   });
 });
 router.get('/thongtinkhoahocfull', (req, res) => {
-  const query = `
-    SELECT kh.*, gv.hoVaTen AS tenGV, 
-           COUNT(bh.maBH) AS soLuongBaiHoc, 
-           IFNULL(SUM(bh.thoiGian), 0) AS tongThoiGian
+  const sql = `
+    SELECT
+      kh.maKH,
+      kh.tenKhoaHoc,
+      kh.moTa,
+      kh.anhKhoaHoc,
+      kh.level,
+      kh.gia,
+      ls.soLuongBaiHoc,
+      ls.tongThoiGian
     FROM khoahoc kh
-    LEFT JOIN khoahoc_giaovien kgv ON kh.maKH = kgv.maKH
-    LEFT JOIN giaovien gv ON kgv.maGV = gv.maGV
-    LEFT JOIN chude cd ON kh.maKH = cd.maKH
-    LEFT JOIN baihoc bh ON cd.maCD = bh.maCD
-    GROUP BY kh.maKH
-    ORDER BY kh.maKH DESC;
+    LEFT JOIN (
+      SELECT
+        cd.maKH,
+        COUNT(bh.maBH)   AS soLuongBaiHoc,
+        SUM(bh.thoiGian) AS tongThoiGian
+      FROM chude cd
+      LEFT JOIN baihoc bh
+        ON bh.maCD = cd.maCD
+      GROUP BY cd.maKH
+    ) AS ls
+      ON ls.maKH = kh.maKH
   `;
-
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Lỗi truy vấn thông tin khóa học đầy đủ' });
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
 });
+
 
 // GET: Danh sách khóa học theo giáo viên
 router.get('/mylistcourse', (req, res) => {

@@ -2,43 +2,64 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import '../css/pages/ChuDe.css'; // Custom CSS nếu có
-import { jwtDecode } from "jwt-decode";
+import '../css/pages/ChuDe.css';
+import { jwtDecode } from 'jwt-decode';
 
-const ChuDe = ({ onChonBaiHoc, onChonQuiz,completedLessons, setCompletedLessons }) => {
+const ChuDe = ({ onChonBaiHoc, completedLessons, setCompletedLessons }) => {
   const { maKH } = useParams();
-  const [tenKhoaHoc, setTenKhoaHoc] = useState('');
-  const [chuDeList, setChuDeList] = useState([]);
-  const token = localStorage.getItem("token");
+  const token   = localStorage.getItem('token');
   const decoded = token ? jwtDecode(token) : null;
-  const maHV = decoded?.maHV;
-  const [baiHocMap, setBaiHocMap] = useState({});
-  const [moChuDe, setMoChuDe] = useState(null);
+  const maHV    = decoded?.maHV;
+
+  const [tenKhoaHoc, setTenKhoaHoc] = useState('');
+  const [chuDeList, setChuDeList]   = useState([]);
+  const [baiHocMap, setBaiHocMap]   = useState({});  // { maCD: [ ...baiHoc ] }
+  const [moChuDe, setMoChuDe]       = useState(null);
   const [autoSelected, setAutoSelected] = useState(false);
 
+  /* ======================================================
+     🔥 LẮNG NGHE SỰ KIỆN HOÀN THÀNH BÀI HỌC
+     ====================================================== */
+  useEffect(() => {
+    const handler = (e) => {
+      const doneMaBH = e.detail; // maBH vừa xong
+      setBaiHocMap((prev) => {
+        const next = { ...prev };
+        for (const maCD in next) {
+          const idx = next[maCD]?.findIndex((b) => b.maBH === doneMaBH);
+          if (idx > -1) {
+            next[maCD][idx] = { ...next[maCD][idx], tinhTrang: 'hoan thanh' };
+            break;
+          }
+        }
+        return next;
+      });
+    };
+
+    window.addEventListener('lessonFinished', handler);
+    return () => window.removeEventListener('lessonFinished', handler);
+  }, []);
+  /* ====================================================== */
+
+  /* --------- (phần code còn lại giữ nguyên) --------- */
   useEffect(() => {
     const cl = [];
-    for(const key in baiHocMap){
-      for(const item of baiHocMap[key]){
-        if(item.tinhTrang==="hoan thanh"){
-          cl.push(item.maBH);
-          
-        }
+    for (const key in baiHocMap) {
+      for (const item of baiHocMap[key]) {
+        if (item.tinhTrang === 'hoan thanh') cl.push(item.maBH);
       }
     }
     setCompletedLessons(cl);
   }, [baiHocMap]);
 
-  // Lấy tên khóa học
   useEffect(() => {
     if (!maKH) return;
     axios
       .get(`http://localhost:5000/api/khoahoc/${maKH}`)
       .then((res) => setTenKhoaHoc(res.data.tenKhoaHoc))
-      .catch((err) => console.error('Lỗi khi lấy tên khóa học:', err));
+      .catch((err) => console.error('Lỗi lấy tên khóa học:', err));
   }, [maKH]);
 
-  // Lấy danh sách chủ đề của khóa học
   useEffect(() => {
     if (!maKH) return;
     axios
@@ -47,136 +68,126 @@ const ChuDe = ({ onChonBaiHoc, onChonQuiz,completedLessons, setCompletedLessons 
       .catch((err) => console.error('Lỗi lấy chủ đề:', err));
   }, [maKH]);
 
-  // Tự động tải danh sách bài giảng của mỗi chủ đề khi chuDeList có dữ liệu
   useEffect(() => {
-    if (chuDeList.length > 0) {
-      chuDeList.forEach((cd) => {
-        if (!baiHocMap[cd.maCD]) {
-          console.log("Token",maHV)
-          axios
-            .post(`http://localhost:5000/api/baihoc/tinhtrang`, {
-              maHV: maHV,
-              maCD: cd.maCD
-            })
-            .then((res) => {
-              setBaiHocMap((prev) => ({ ...prev, [cd.maCD]: res.data }));
-            })
-            .catch((err) =>
-              console.error(`Lỗi tải bài học cho chủ đề ${cd.maCD}:`, err)
-            );
-        }
-      });
-    }
-  }, [chuDeList, baiHocMap]);
+    if (chuDeList.length === 0) return;
 
-  // Tự động mở chủ đề đầu tiên nếu chưa có chủ đề mở
+    chuDeList.forEach((cd) => {
+      if (!baiHocMap[cd.maCD]) {
+        axios
+          .post('http://localhost:5000/api/baihoc/tinhtrang', {
+            maHV,
+            maCD: cd.maCD,
+          })
+          .then((res) =>
+            setBaiHocMap((prev) => ({ ...prev, [cd.maCD]: res.data })),
+          )
+          .catch((err) =>
+            console.error(`Lỗi tải bài học cho chủ đề ${cd.maCD}:`, err),
+          );
+      }
+    });
+  }, [chuDeList, baiHocMap, maHV]);
+
   useEffect(() => {
-    if (!autoSelected && chuDeList.length > 0 && !moChuDe) {
+    if (!autoSelected && chuDeList.length && !moChuDe) {
       toggleChuDe(chuDeList[0].maCD);
     }
   }, [chuDeList, autoSelected, moChuDe]);
 
-  // Tự động chọn bài học đầu tiên của chủ đề đang mở nếu đã mở
   useEffect(() => {
     if (
       !autoSelected &&
       moChuDe &&
-      baiHocMap[moChuDe] &&
-      baiHocMap[moChuDe].length > 0
+      baiHocMap[moChuDe]?.length > 0
     ) {
       onChonBaiHoc(baiHocMap[moChuDe][0].maBH);
       setAutoSelected(true);
     }
   }, [baiHocMap, moChuDe, autoSelected, onChonBaiHoc]);
 
-  // Hàm kiểm tra mở khóa bài học trong 1 chủ đề:
-  // Nếu lessonIndex==0 thì unlocked nếu chủ đề đã mở.
-  // Nếu lessonIndex>0 thì unlocked nếu bài học liền trước đó đã hoàn thành (có trong completedLessons)
-  const isLessonUnlocked = (lessons, lessonIndex) => {
-    if (!lessons || lessons.length === 0) return false;
-    if(lessonIndex==0){
-      
-      return true;
-    }
-    return completedLessons.includes(lessons[lessonIndex-1].maBH);
-    
-  };
-  // Hàm kiểm tra mở khóa chủ đề:
-  // Chủ đề đầu tiên luôn mở.
-  // Chủ đề thứ N (N>0) mở nếu tất cả bài học của chủ đề N-1 đã hoàn thành.
-  const isTopicUnlocked = (topicIndex) => {
-    if (topicIndex === 0) return true;
-    const prevTopic = chuDeList[topicIndex - 1];
-    const lessons = baiHocMap[prevTopic.maCD] || [];
-    return lessons.length > 0 && lessons.every((lesson) => completedLessons.includes(lesson.maBH));
+  const isLessonUnlocked = (lessons, idx) =>
+    idx === 0 ? true : completedLessons.includes(lessons[idx - 1]?.maBH);
+
+  const isTopicUnlocked = (topicIdx) => {
+    if (topicIdx === 0) return true;
+    const prevTopic = chuDeList[topicIdx - 1];
+    const prevLessons = baiHocMap[prevTopic.maCD] || [];
+    return (
+      prevLessons.length > 0 &&
+      prevLessons.every((l) => completedLessons.includes(l.maBH))
+    );
   };
 
-  // Mở hoặc thu gọn chủ đề
   const toggleChuDe = (maCD) => {
-    // Nếu chủ đề đang mở thì thu gọn
-    if (moChuDe === maCD) {
-      setMoChuDe(null);
+    if (moChuDe === maCD) return setMoChuDe(null);
+
+    const topicIdx = chuDeList.findIndex((cd) => cd.maCD === maCD);
+    if (!isTopicUnlocked(topicIdx)) {
+      alert('Chủ đề này chưa mở khoá, hãy hoàn thành chủ đề trước.');
       return;
     }
-    // Kiểm tra chủ đề có được mở khóa không
-    const topicIndex = chuDeList.findIndex((cd) => cd.maCD === maCD);
-    if (!isTopicUnlocked(topicIndex)) {
-      // Nếu chưa được mở khóa, không làm gì hoặc thông báo
-      alert('Chủ đề này chưa được mở khóa. Hãy hoàn thành các bài giảng của chủ đề trước.');
-      return;
-    }
-    // Mở chủ đề
     setMoChuDe(maCD);
   };
 
   return (
     <div className="accordion-container">
       <h3 className="ten-khoa-hoc">📚 Khóa học: {tenKhoaHoc}</h3>
+
       {chuDeList.length === 0 ? (
         <p>Đang tải chủ đề...</p>
       ) : (
-        chuDeList.map((cd, topicIndex) => (
+        chuDeList.map((cd, topicIdx) => (
           <div key={cd.maCD} className="accordion-item">
             <div
               className="accordion-header"
               onClick={() => toggleChuDe(cd.maCD)}
             >
               <span>
-                Chương {topicIndex + 1}: {cd.tenChuDe}
+                Chương {topicIdx + 1}: {cd.tenChuDe}
               </span>
               <span className="lesson-count">
-                {(baiHocMap[cd.maCD] && baiHocMap[cd.maCD].length) || 0} bài giảng
+                {(baiHocMap[cd.maCD]?.length || 0)} bài giảng
               </span>
-              {/* Nếu chủ đề chưa mở khóa, hiển thị khóa */}
-              {!isTopicUnlocked(topicIndex) && <span className="lock-icon">🔒</span>}
+              {!isTopicUnlocked(topicIdx) && (
+                <span className="lock-icon">🔒</span>
+              )}
             </div>
+
             {moChuDe === cd.maCD && (
               <div className="accordion-content">
-                {baiHocMap[cd.maCD] && baiHocMap[cd.maCD].length > 0 ? (
-                  baiHocMap[cd.maCD].map((bh, lessonIndex) => {
-                    const unlocked = isLessonUnlocked(baiHocMap[cd.maCD], lessonIndex);
+                {baiHocMap[cd.maCD]?.length > 0 ? (
+                  baiHocMap[cd.maCD].map((bh, idx) => {
+                    const unlocked = isLessonUnlocked(
+                      baiHocMap[cd.maCD],
+                      idx,
+                    );
                     return (
                       <div
                         key={bh.maBH}
-                        className={`lesson-item ${!unlocked ? 'locked' : ''}`}
-                        onClick={() => {
-                          if (unlocked) {
-                            
-                            onChonBaiHoc(bh.maBH,cd.maCD);
-                          } else {
-                            alert('Hãy hoàn thành bài học trước để mở khóa bài học này.');
-                          }
-                        }}
+                        className={`lesson-item ${
+                          !unlocked ? 'locked' : ''
+                        }`}
+                        onClick={() =>
+                          unlocked
+                            ? onChonBaiHoc(bh.maBH, cd.maCD)
+                            : alert(
+                                'Hãy hoàn thành bài học trước để mở khoá bài này.',
+                              )
+                        }
                       >
                         <span>
-                          {lessonIndex + 1}. {bh.tenBaiHoc}
+                          {idx + 1}. {bh.tenBaiHoc}
                         </span>
-                        {!unlocked && <span className="lock-icon">🔒</span>}
+                        {!unlocked && (
+                          <span className="lock-icon">🔒</span>
+                        )}
                       </div>
                     );
                   })
                 ) : (
-                  <p style={{ marginLeft: '16px' }}>Chưa có bài giảng trong chủ đề này</p>
+                  <p style={{ marginLeft: 16 }}>
+                    Chưa có bài giảng trong chủ đề này
+                  </p>
                 )}
               </div>
             )}

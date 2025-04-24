@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaBell, FaUserCircle } from 'react-icons/fa';
+import { FaSearch, FaBell } from 'react-icons/fa';
 import axios from 'axios';
 import '../css/giaovienquanly/NavbarTeacher.css';
 import { useNavigate } from 'react-router-dom';
@@ -8,10 +8,12 @@ import HoSoCaNhan from '../component/HoSoCaNhan';
 const NavbarTeacher = ({ handleSearchChange }) => {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef(null);
   const [showHoSo, setShowHoSo] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  // Đăng xuất
   const handleDangXuat = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -23,12 +25,15 @@ const NavbarTeacher = ({ handleSearchChange }) => {
 
   // Lấy thông tin giáo viên
   const fetchUser = async () => {
-    const userGV = JSON.parse(localStorage.getItem('userGV'));
-    if (!userGV?.maGV) return;
+    const stored = localStorage.getItem('userGV');
+    if (!stored) return;
+    const userGV = JSON.parse(stored);
+    if (!userGV.maGV) return;
 
     try {
       const res = await axios.get(`http://localhost:5000/api/giaovien/${userGV.maGV}`);
       setUser(res.data);
+      setImgError(false);
     } catch (err) {
       console.error('Lỗi lấy thông tin giáo viên:', err);
     }
@@ -38,8 +43,10 @@ const NavbarTeacher = ({ handleSearchChange }) => {
     fetchUser();
   }, []);
 
-  const toggleDropdown = () => setShowDropdown(!showDropdown);
+  // Toggle dropdown menu
+  const toggleDropdown = () => setShowDropdown(prev => !prev);
 
+  // Đóng dropdown khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -50,6 +57,12 @@ const NavbarTeacher = ({ handleSearchChange }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Xác định đường dẫn avatar hoặc fallback
+  const avatarSrc =
+    !imgError && user?.avatar
+      ? `http://localhost:5000/uploads/anhgiaovien/${user.avatar}`
+      : '/default-avatar.png';
+
   return (
     <>
       <nav className="navbar-teacher">
@@ -57,7 +70,6 @@ const NavbarTeacher = ({ handleSearchChange }) => {
           <h2 className="navbar-brand-teacher">LCMS</h2>
           <div className="search-box-teacher">
             <FaSearch />
-            {/* Gắn onChange từ prop handleSearchChange (nếu có) */}
             <input
               type="text"
               placeholder="Tìm kiếm..."
@@ -68,17 +80,17 @@ const NavbarTeacher = ({ handleSearchChange }) => {
 
         <div className="navbar-right-teacher" ref={dropdownRef}>
           <FaBell className="icon-bell" />
-          <div className="avatar-container" onClick={toggleDropdown}>
-            {user?.avatar ? (
+
+          {user && (
+            <div className="avatar-container" onClick={toggleDropdown}>
               <img
-                src={`http://localhost:5000/uploads/anhgiaovien/${user.avatar}`}
+                src={avatarSrc}
                 alt={user.hoVaTen}
-                className="avatar-teacher"
+                className="user-avatar"
+                onError={() => setImgError(true)}
               />
-            ) : (
-              <FaUserCircle className="avatar-icon" />
-            )}
-          </div>
+            </div>
+          )}
 
           {showDropdown && (
             <div className="dropdown-menu-teacher">
@@ -93,8 +105,9 @@ const NavbarTeacher = ({ handleSearchChange }) => {
               </button>
               <button
                 onClick={() => {
-                  const xacNhan = window.confirm('Bạn có chắc chắn muốn đăng xuất?');
-                  if (xacNhan) handleDangXuat();
+                  if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                    handleDangXuat();
+                  }
                 }}
               >
                 Đăng xuất
@@ -109,7 +122,7 @@ const NavbarTeacher = ({ handleSearchChange }) => {
           vaiTro="giaovien"
           id={user.maGV}
           onClose={() => setShowHoSo(false)}
-          onUpdate={fetchUser} // cập nhật lại avatar nếu cần
+          onUpdate={fetchUser}
         />
       )}
     </>

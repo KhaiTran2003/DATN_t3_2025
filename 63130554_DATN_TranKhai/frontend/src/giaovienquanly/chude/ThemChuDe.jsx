@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
-import '../../css/giaovienquanly/ThemKhoaHoc.css';
+import '../../css/giaovienquanly/ThemChuDe.css';
 
 const ThemChuDe = () => {
   const navigate = useNavigate();
@@ -12,22 +12,17 @@ const ThemChuDe = () => {
   const [danhSachKhoaHoc, setDanhSachKhoaHoc] = useState([]);
 
   useEffect(() => {
-    try {
-      const userGV = JSON.parse(localStorage.getItem('userGV'));
-      const maGV = userGV?.maGV;
-
-      if (!maGV) {
-        alert('Không tìm thấy mã giáo viên!');
-        return;
-      }
-
-      axios.get(`http://localhost:5000/api/mylistcourse?maGV=${maGV}`)
-        .then(res => setDanhSachKhoaHoc(res.data))
-        .catch(err => console.error('Lỗi khi load danh sách khóa học:', err));
-    } catch (error) {
-      console.error('Lỗi khi đọc userGV từ localStorage:', error);
-      alert('Dữ liệu người dùng không hợp lệ.');
+    const userGV = JSON.parse(localStorage.getItem('userGV'));
+    const maGV = userGV?.maGV;
+    if (!maGV) {
+      alert('Không tìm thấy mã giáo viên!');
+      return;
     }
+
+    axios
+      .get(`http://localhost:5000/api/mylistcourse?maGV=${maGV}`)
+      .then(res => setDanhSachKhoaHoc(res.data))
+      .catch(err => console.error('Lỗi khi load danh sách khóa học:', err));
   }, []);
 
   const handleChangeChuDe = (index, value) => {
@@ -48,7 +43,6 @@ const ThemChuDe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!maKH || danhSachChuDe.some(cd => !cd.trim())) {
       alert('Vui lòng nhập đầy đủ thông tin!');
       return;
@@ -56,12 +50,8 @@ const ThemChuDe = () => {
 
     try {
       for (let ten of danhSachChuDe) {
-        await axios.post('http://localhost:5000/api/themchude', {
-          maKH,
-          tenChuDe: ten.trim()
-        });
+        await axios.post('http://localhost:5000/api/themchude', { maKH, tenChuDe: ten.trim() });
       }
-
       alert(`✅ Đã thêm ${danhSachChuDe.length} chủ đề thành công!`);
       navigate('/giaovienquanly/danhsachchude');
     } catch (err) {
@@ -71,30 +61,28 @@ const ThemChuDe = () => {
   };
 
   return (
-    <div className="teacher-layout">
+    <div className="teacher-layout-cd">
       <SidebarTeacher />
-      <div className="teacher-main-content">
+      <div className="teacher-main-content-cd">
         <NavbarTeacher />
-        <div className="teacher-page-content">
-          <div className="page-container">
-            <div className="page-header">
-              <h1 className="page-title">Thêm chủ đề mới</h1>
+        <div className="teacher-page-content-cd">
+          <div className="page-container-cd">
+            <div className="page-header-cd">
+              <h1 className="page-title-cd">Thêm chủ đề mới</h1>
             </div>
-            <div className="form-container">
-              <form onSubmit={handleSubmit} className="form-fields">
-                <div className="form-group">
+            <div className="form-container-cd">
+              <form onSubmit={handleSubmit} className="form-fields-cd">
+                <div className="form-group-cd">
                   <label>Chọn khóa học</label>
                   <select value={maKH} onChange={(e) => setMaKH(e.target.value)} required>
                     <option value="">-- Chọn khóa học --</option>
                     {danhSachKhoaHoc.map((kh) => (
-                      <option key={kh.maKH} value={kh.maKH}>
-                        {kh.tenKhoaHoc}
-                      </option>
+                      <option key={kh.maKH} value={kh.maKH}>{kh.tenKhoaHoc}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group-cd">
                   <label>Danh sách chủ đề</label>
                   {danhSachChuDe.map((cd, index) => (
                     <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
@@ -106,14 +94,17 @@ const ThemChuDe = () => {
                         required
                       />
                       {danhSachChuDe.length > 1 && (
-                        <button type="button" onClick={() => handleRemoveChuDe(index)}>🗑️</button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveChuDe(index)}
+                        >🗑️</button>
                       )}
                     </div>
                   ))}
                   <button type="button" onClick={handleAddChuDe}>+ Thêm chủ đề</button>
                 </div>
 
-                <div className="form-actions full">
+                <div className="form-actions-cd full">
                   <button type="submit">Lưu chủ đề</button>
                 </div>
               </form>

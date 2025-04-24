@@ -1,13 +1,13 @@
 /* ========== Navbar chính ========= */
 .navbar-teacher {
   position: fixed;
-    height: 64px;
+    height: 200px;
     background: #ffffff;
     border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    padding:  20px;
     margin-left: 40px;
   }
   
@@ -52,15 +52,15 @@
     color: #4b5563;
   }
   
+  /* Avatar bo tròn */
   .avatar-teacher {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: 50%;    /* ensure perfect circle */
     object-fit: cover;
     border: 2px solid #3b82f6;
     cursor: pointer;
   }
-  
   .avatar-icon {
     font-size: 32px;
     color: #4b5563;
@@ -103,4 +103,39 @@
   .dropdown-menu-teacher button:hover {
     color: #2563eb;
   }
-  
+  /* Avatar container */
+.avatar-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  border: 2px solid #3b82f6;
+}
+
+/* Media query cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .navbar-teacher {
+    padding: 0 10px;        /* giảm padding */
+    height: 56px;           /* làm nhỏ chiều cao */
+  }
+
+  .navbar-brand-teacher {
+    font-size: 18px;        /* chữ nhỏ hơn */
+  }
+
+  .search-box-teacher {
+    display: none;          /* ẩn thanh tìm kiếm nếu cần */
+  }
+
+  .avatar-teacher {
+    width: 28px;
+    height: 28px;           /* avatar nhỏ lại */
+    border-width: 1px;
+  }
+
+  .icon-bell {
+    font-size: 16px;        /* icon nhỏ hơn */
+  }
+}

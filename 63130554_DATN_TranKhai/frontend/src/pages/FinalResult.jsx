@@ -5,80 +5,107 @@ import { useLocation } from 'react-router-dom';
 import '../css/pages/FinalResult.css';
 
 const FinalResult = () => {
-  const locationData = useLocation().state;
-  const { maHV, maKH } = locationData || {};
+  const { maHV, maKH } = useLocation().state || {};
+  const BASE_URL = 'http://localhost:5000/api';
 
-  const quizHistory = JSON.parse(localStorage.getItem("quizHistory")) || [];
-  const totalCorrect = quizHistory.reduce((sum, item) => sum + item.score, 0);
-  const totalQuestions = quizHistory.reduce((sum, item) => sum + item.totalQuestions, 0);
-
-  const [student, setStudent] = useState(null);
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const quizPercentage = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+  const [student, setStudent]   = useState(null);
+  const [course, setCourse]     = useState(null);
+  const [progress, setProgress] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
   useEffect(() => {
     if (!maHV || !maKH) return;
 
+    setLoading(true);
     Promise.all([
-      axios.get(`http://localhost:5000/api/hocvien/${maHV}`),
-      axios.get(`http://localhost:5000/api/khoahoc/${maKH}`)
+      axios.get(`${BASE_URL}/hocvien/${maHV}`),
+      axios.get(`${BASE_URL}/khoahoc/${maKH}`),
+      axios.get(`${BASE_URL}/danhsachtientrinh/${maHV}/${maKH}`)
     ])
-      .then(([studentRes, courseRes]) => {
-        setStudent(studentRes.data);
-        setCourse(courseRes.data);
+      .then(([stuRes, courRes, progRes]) => {
+        setStudent(stuRes.data);
+        setCourse(courRes.data);
+        setProgress(progRes.data);
         setError(null);
       })
       .catch(err => {
-        console.error("Lỗi khi tải dữ liệu:", err);
-        setError("Không thể tải thông tin học viên hoặc khóa học.");
+        console.error('Lỗi tải dữ liệu:', err);
+        setError('Không thể tải dữ liệu kết quả.');
       })
       .finally(() => setLoading(false));
   }, [maHV, maKH]);
 
-  if (loading) return <div style={{ padding: '20px' }}>Đang tải dữ liệu kết quả...</div>;
-  if (error) return <div style={{ padding: '20px', color: 'red' }}>{error}</div>;
+  if (loading) return <div className="loading">Đang tải dữ liệu kết quả...</div>;
+  if (error)   return <div className="error">{error}</div>;
+
+  const totalLessons   = progress.length;
+  const completedCount = progress.filter(i => i.tinhTrang === 'hoan thanh').length;
+
+  // Tính điểm trung bình
+  const sumScore      = progress.reduce((sum, i) => sum + i.diemToiDa, 0);
+  const avgScore      = totalLessons > 0 ? sumScore / totalLessons : 0;
+  const avgPercentage = Math.round(avgScore);
+
+  // Tính số lần làm lại trung bình
+  const sumAttempts   = progress.reduce((sum, i) => sum + i.soLanLamKT, 0);
+  const avgAttempts   = totalLessons > 0 ? sumAttempts / totalLessons : 0;
 
   return (
     <div className="result-container" style={{ padding: '20px' }}>
       <h2>Kết quả Khóa Học</h2>
 
       {student && <p><strong>Học viên:</strong> {student.hoVaTen}</p>}
-      {course && <p><strong>Khóa học:</strong> {course.tenKhoaHoc}</p>}
+      {course  && <p><strong>Khóa học:</strong> {course.tenKhoaHoc}</p>}
 
-      <p><strong>Tổng điểm quiz:</strong> {quizPercentage}% ({totalCorrect} / {totalQuestions} câu đúng)</p>
+      <p><strong>Tiến trình:</strong> {completedCount} / {totalLessons} bài hoàn thành</p>
+      <p>
+        <strong>Điểm trung bình:</strong> {avgScore.toFixed(1)} ({avgPercentage}%)
+      </p>
+      <p>
+        <strong>Số lần làm lại trung bình:</strong> {avgAttempts.toFixed(1)} lần/bài
+      </p>
 
-      <h3>Gợi ý Lộ Trình Học</h3>
-      {quizPercentage < 70 && <p>Bạn cần ôn tập lại và thực hành nhiều hơn để củng cố kiến thức.</p>}
-      {quizPercentage >= 70 && quizPercentage < 90 && <p>Kết quả của bạn khá tốt. Hãy tiếp tục duy trì và cải thiện hơn nữa!</p>}
-      {quizPercentage >= 90 && <p>Chúc mừng! Bạn đã xuất sắc hoàn thành khóa học. Hãy thử tham gia các khóa học nâng cao tiếp theo!</p>}
-
-      <h3>Chi Tiết Các Bài Quiz</h3>
-      {quizHistory.length > 0 ? (
-        <table border="1" cellPadding="8" cellSpacing="0">
+      <h3>Chi Tiết Tiến Trình Học Tập</h3>
+      {progress.length > 0 ? (
+        <table className="progress-table" border="1" cellPadding="8" cellSpacing="0">
           <thead>
             <tr>
               <th>Bài học</th>
-              <th>Điểm</th>
-              <th>Số câu</th>
-              <th>Thời gian làm</th>
+              <th>Trạng thái</th>
+              <th>Số lần làm</th>
+              <th>Làm quiz nhanh nhất (p)</th>
+              <th>Điểm tối đa</th>
             </tr>
           </thead>
           <tbody>
-            {[...quizHistory].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 10).map((item, index) => (
-              <tr key={index}>
-                <td>{item.maBH}</td>
-                <td>{item.score}</td>
-                <td>{item.totalQuestions}</td>
-                <td>{item.time}</td>
+            {progress.map(item => (
+              <tr key={item.maBH}>
+                <td>{item.tenBaiHoc}</td>
+                <td>{item.tinhTrang === 'hoan thanh' ? 'Hoàn thành' : 'Đang học'}</td>
+                <td>{item.soLanLamKT}</td>
+                <td>{item.thoiGianMin}</td>
+                <td>{item.diemToiDa}</td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>Không có dữ liệu quiz.</p>
+        <p>Chưa có tiến trình học.</p>
+      )}
+
+      <h3>Gợi ý Lộ Trình Học</h3>
+      {(avgPercentage < 70 || avgAttempts > 2) && (
+        <p>Bạn cần ôn tập lại và thực hành nhiều hơn để củng cố kiến thức.</p>
+      )}
+      {(avgPercentage >= 70 && avgPercentage < 90 && avgAttempts <= 2) && (
+        <p>Kết quả của bạn khá tốt. Hãy tiếp tục duy trì và cải thiện hơn nữa!</p>
+      )}
+      {(avgPercentage >= 90 && avgAttempts <= 1) && (
+        <p>Chúc mừng! Bạn đã xuất sắc hoàn thành khóa học. Hãy thử tham gia các khóa học nâng cao tiếp theo!</p>
+      )}
+      {(avgPercentage >= 90 && avgAttempts > 1) && (
+        <p>Mặc dù điểm cao, bạn đã phải làm lại nhiều lần. Hãy ôn lại để tăng độ chính xác và tự tin hơn!</p>
       )}
     </div>
   );

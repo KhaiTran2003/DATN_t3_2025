@@ -1,0 +1,64 @@
+.gv-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    font-family: 'Segoe UI', sans-serif;
+    color: #1f2937;
+  }
+  
+  .back-btn {
+    margin-bottom: 1rem;
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .gv-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background-color: #f3f4f6;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .gv-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 3px solid #2563eb;
+  }
+  
+  .gv-info h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .gv-courses {
+    margin-top: 2rem;
+    background-color: #fefefe;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  
+  .gv-courses ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  
+  .course-item {
+    margin-bottom: 0.5rem;
+  }
+  .clickable {
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .clickable:hover {
+    color: #2563eb;
+  }
+    

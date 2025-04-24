@@ -2,6 +2,30 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database'); // Kết nối CSDL đã cấu hình
 
+// routes/tientrinh.js
+router.get(
+  '/danhsachtientrinh/:maHV/:maKH',
+  (req, res) => {
+    const { maHV, maKH } = req.params;
+    const sql = `
+      SELECT bh.maBH, bh.tenBaiHoc,
+             t.tinhTrang, t.soLanLamKT,
+             t.thoiGianLamBai, t.thoiGianMin, t.diemToiDa
+      FROM chude cd
+      JOIN baihoc bh ON cd.maCD = bh.maCD
+      LEFT JOIN tientrinh t
+        ON bh.maBH = t.maBH AND t.maHV = ?
+      WHERE cd.maKH = ?
+      ORDER BY bh.STT
+    `;
+    db.query(sql, [maHV, maKH], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    });
+  }
+);
+
+
 router.post('/baihoc/tinhtrang',(req,res)=>{
   const data = req.body;
   const query = `
@@ -73,7 +97,7 @@ router.post('/themtientrinh',(req,res)=>{
   const data = req.body;
   const query = `
    INSERT INTO tientrinh (maHV, maBH, tinhTrang, thoiGianLamBai, soLanLamKT, thoiGianMin, diemToiDa)
-   VALUES (?,?,"dang hoc",15,0,999,0)
+   VALUES (?,?,"dang hoc",0,0,0,0)
   `;
   
   db.query(query, [data.mahv,data.mabh], (err, results) => {

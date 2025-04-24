@@ -1,64 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Table from '../../component/table';
 import { useNavigate } from 'react-router-dom';
 import NavbarTeacher from '../NavbarTeacher';
 import SidebarTeacher from '../SidebarTeacher';
+import Table from '../../component/table';
 import PhanTrang from '../../component/PhanTrang';
 import '../../css/giaovienquanly/DSBaiHoc.css';
 
-// Hàm giúp loại bỏ HTML tags và trả về text thuần
-const stripHtml = (html) => {
-  if (!html) return '';
-  // Sử dụng regex để loại bỏ tất cả các thẻ HTML
-  return html.replace(/<[^>]*>/g, '');
-};
+// Helper to strip HTML tags to plain text
+const stripHtml = (html) => html ? html.replace(/<[^>]*>/g, '') : '';
 
 const DSBaiHoc = () => {
   const [baiHoc, setBaiHoc] = useState([]);
   const [originalBaiHoc, setOriginalBaiHoc] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
     const userGV = localStorage.getItem('userGV');
     if (!userGV) return;
-
     const { maGV } = JSON.parse(userGV);
     axios.get(`http://localhost:5000/api/mylistlesson?maGV=${maGV}`)
-      .then((res) => {
+      .then(res => {
         setBaiHoc(res.data);
         setOriginalBaiHoc(res.data);
       })
-      .catch((err) => console.error('Lỗi khi load danh sách bài học:', err));
+      .catch(err => console.error('Lỗi khi load danh sách bài học:', err));
   }, []);
 
-  // Hàm lọc bài học theo từ khóa (tìm kiếm theo tên bài học, chủ đề hoặc nội dung)
-  const handleSearchChange = (event) => {
-    const keyword = event.target.value.toLowerCase().trim();
+  // Search by lesson title, topic or content
+  const handleSearchChange = (e) => {
+    const keyword = e.target.value.toLowerCase().trim();
     setCurrentPage(1);
     if (!keyword) {
       setBaiHoc(originalBaiHoc);
       return;
     }
-    // Lọc theo các trường: tenBaiHoc, tenChuDe và noiDung (đã loại bỏ HTML)
-    const filtered = originalBaiHoc.filter(bh =>
-      (bh.tenBaiHoc && bh.tenBaiHoc.toLowerCase().includes(keyword)) ||
-      (bh.tenChuDe && bh.tenChuDe.toLowerCase().includes(keyword)) ||
-      (bh.noiDung && stripHtml(bh.noiDung).toLowerCase().includes(keyword))
-    );
+    const filtered = originalBaiHoc.filter(bh => {
+      const title = bh.tenBaiHoc?.toLowerCase() || '';
+      const topic = bh.tenChuDe?.toLowerCase() || '';
+      const content = stripHtml(bh.noiDung)?.toLowerCase() || '';
+      return (
+        title.includes(keyword) ||
+        topic.includes(keyword) ||
+        content.includes(keyword)
+      );
+    });
     setBaiHoc(filtered);
   };
 
+  // Delete lesson
   const handleDelete = async (id) => {
-    const confirm = window.confirm('Bạn có chắc muốn xoá bài học này không?');
-    if (!confirm) return;
-
+    if (!window.confirm('Bạn có chắc muốn xoá bài học này không?')) return;
     try {
       await axios.delete(`http://localhost:5000/api/xoabaihoc/${id}`);
-      setBaiHoc(prev => prev.filter(bh => bh.maBH !== id));
-      setOriginalBaiHoc(prev => prev.filter(bh => bh.maBH !== id));
+      const updated = baiHoc.filter(bh => bh.maBH !== id);
+      setBaiHoc(updated);
+      setOriginalBaiHoc(updated);
       alert('Xoá thành công!');
     } catch (err) {
       console.error('Lỗi khi xoá:', err);
@@ -73,19 +72,17 @@ const DSBaiHoc = () => {
       label: 'Nội dung',
       key: 'noiDung',
       render: (value) => {
-        // Loại bỏ HTML rồi tạo preview với độ dài tối đa
-        const maxLength = 50;
-        const plainText = stripHtml(value);
-        return plainText.length > maxLength ? plainText.slice(0, maxLength) + '...' : plainText;
+        const text = stripHtml(value);
+        return text.length > 50 ? text.slice(0, 50) + '...' : text;
       }
     },
     {
       label: 'URL',
       key: 'url',
       render: (value) => {
-        const maxLength = 50;
-        const shortURL = value && value.length > maxLength ? value.slice(0, maxLength) + '...' : value;
-        return value ? <a href={value} target="_blank" rel="noopener noreferrer" title={value}>{shortURL}</a> : '—';
+        if (!value) return '—';
+        const short = value.length > 50 ? value.slice(0, 50) + '...' : value;
+        return <a href={value} target="_blank" rel="noopener noreferrer">{short}</a>;
       }
     },
     {
@@ -98,16 +95,10 @@ const DSBaiHoc = () => {
       key: 'maBH',
       render: (value, row) => (
         <div className="action-buttons">
-          <button
-            onClick={() => navigate(`/giaovienquanly/baihoc/suabaihoc/${row.maBH}`)}
-            className="btn edit"
-          >
+          <button className="btn edit" onClick={() => navigate(`/giaovienquanly/baihoc/suabaihoc/${row.maBH}`)}>
             ✏️ Sửa
           </button>
-          <button
-            onClick={() => handleDelete(row.maBH)}
-            className="btn delete"
-          >
+          <button className="btn delete" onClick={() => handleDelete(row.maBH)}>
             ❌ Xóa
           </button>
         </div>
@@ -125,25 +116,17 @@ const DSBaiHoc = () => {
     <div className="teacher-layout">
       <SidebarTeacher />
       <div className="teacher-main-content">
-        {/* Truyền handleSearchChange xuống NavbarTeacher để thực hiện tìm kiếm */}
         <NavbarTeacher handleSearchChange={handleSearchChange} />
         <div className="teacher-page-content">
           <div className="page-container">
             <div className="page-header">
               <h1 className="page-title">Danh sách bài học</h1>
-              <button
-                onClick={() => navigate('/giaovienquanly/baihoc/thembaihoc')}
-                className="btn add"
-              >
+              <button className="btn add" onClick={() => navigate('/giaovienquanly/baihoc/thembaihoc')}>
                 + Thêm bài học
               </button>
             </div>
             <Table data={paginatedData} columns={columns} />
-            <PhanTrang
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+            <PhanTrang currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           </div>
         </div>
       </div>

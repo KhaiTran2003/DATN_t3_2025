@@ -22,6 +22,7 @@ import BaiHoc from './pages/BaiHoc';
 import ChiTietBaiHoc from './pages/ChiTietBaiHoc';
 import FinalResult from './pages/FinalResult';
 import XemTienTrinhHV from './giaovienquanly/tientrinh/XemTienTrinhHV';
+import ChiTietGiaoVien from './pages/ChiTietGiaoVien';
 function App() {
   return (
     <Router>
@@ -54,6 +55,7 @@ function App() {
         <Route path="/final-result" element={<FinalResult />} />
 
 
+        <Route path="/chitietgiaovien/:id" element={<ChiTietGiaoVien />} />
 
 
         <Route path="/hosocanhan/:id" element={<HoSoCaNhan />} />

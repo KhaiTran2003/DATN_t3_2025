@@ -37,7 +37,7 @@ const DangNhap = () => {
         const { token, user } = resGV.data;
         localStorage.setItem('token', token);
         localStorage.setItem('userGV', JSON.stringify(user)); // ✅ key "userGV" cho giáo viên
-        navigate('/giaovienquanly/dashboardteacher');
+        navigate('/giaovienquanly/dashboard');
       } catch (errGV) {
         setThongBao('Sai tài khoản hoặc mật khẩu');
       }

@@ -138,6 +138,24 @@ router.post('/dangnhapgiaovien', (req, res) => {
     }
   );
 });
+// API: Lấy danh sách học viên theo maGV
+router.get('/hocvien/giaovien/:maGV', (req, res) => {
+  const { maGV } = req.params;
+  const sql = `
+    SELECT DISTINCT hv.*
+    FROM hocvien hv
+    JOIN dangky d    ON hv.maHV = d.maHV
+    JOIN khoahoc_giaovien kgv ON d.maKH = kgv.maKH
+    WHERE kgv.maGV = ?
+  `;
+  db.query(sql, [maGV], (err, results) => {
+    if (err) {
+      console.error('Lỗi khi lấy học viên của giáo viên:', err);
+      return res.status(500).json({ error: 'Không thể tải học viên' });
+    }
+    res.json(results);
+  });
+});
 
 
 module.exports = router;
