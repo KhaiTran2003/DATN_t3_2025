@@ -186,7 +186,6 @@ router.delete('/xoahocvien/:id', (req, res) => {
 // POST: Đăng nhập học viên
 router.post('/dangnhap', (req, res) => {
   const { tenDangNhap, matKhau } = req.body;
-
   db.query(
     'SELECT * FROM hocvien WHERE tenDangNhap = ? AND matKhau = ?',
     [tenDangNhap, matKhau],
@@ -217,7 +216,7 @@ router.post('/dangnhap', (req, res) => {
           tenDangNhap: user.tenDangNhap,
           hoVaTen: user.hoVaTen,
           vaiTro: 'hocvien',
-          avatar: user.avatar // ✅ Thêm avatar ở đây
+          avatar: user.avatar 
         }
       });
     }

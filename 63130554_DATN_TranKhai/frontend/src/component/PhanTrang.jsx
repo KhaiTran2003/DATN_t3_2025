@@ -51,10 +51,10 @@ const PhanTrang = ({ currentPage, totalPages, onPageChange }) => {
 
       {pages.map((page, idx) => (
         page === '...' ? (
-          <span key={idx} className="pagination-ellipsis">…</span>
+          <span key={`ellipsis-${idx}`} className="pagination-ellipsis">…</span> // Sử dụng key độc nhất cho dấu ba chấm
         ) : (
           <button
-            key={page}
+            key={`page-${page}`} // Sử dụng key độc nhất cho các trang
             className={`pagination-button ${page === currentPage ? 'active' : ''}`}
             onClick={() => onPageChange(page)}
           >

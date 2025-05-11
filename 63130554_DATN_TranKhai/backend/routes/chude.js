@@ -20,7 +20,7 @@ router.get('/chude-with-baihoc', (req, res) => {
   `;
   db.query(sql, (err, results) => {
     if (err) return res.status(500).json({ error: 'Lỗi truy vấn chủ đề với bài học' });
-    // Bạn cần xử lý dữ liệu để gom nhóm bài học theo chủ đề
+    //  xử lý dữ liệu để gom nhóm bài học theo chủ đề
     const data = results.reduce((acc, row) => {
       // Nếu chủ đề chưa có trong mảng kết quả, thêm mới
       if (!acc[row.maCD]) {

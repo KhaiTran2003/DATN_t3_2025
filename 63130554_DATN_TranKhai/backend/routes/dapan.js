@@ -61,15 +61,12 @@ router.post('/themdapan', (req, res) => {
     }
   );
 });
-
-
-// PUT: Sửa đáp án
 router.put('/suadapan/:id', (req, res) => {
-  const { maCH, dapAn, dungsai } = req.body;
+  const { maCH, dapAn, dungSai } = req.body; // sửa lại 'dungsai' thành 'dungSai'
   const { id } = req.params;
   db.query(
-    'UPDATE dapan SET maCH = ?, dapAn = ?, dungsai = ? WHERE maDA = ?',
-    [maCH, dapAn, dungsai, id],
+    'UPDATE dapan SET maCH = ?, dapAn = ?, dungSai = ? WHERE maDA = ?',
+    [maCH, dapAn, dungSai, id],
     (err) => {
       if (err) return res.status(500).json({ error: 'Không thể cập nhật đáp án' });
       res.json({ message: 'Cập nhật đáp án thành công' });
@@ -77,8 +74,6 @@ router.put('/suadapan/:id', (req, res) => {
   );
 });
 
-
-// DELETE: Xoá đáp án
 router.delete('/xoadapan/:id', (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM dapan WHERE maDA = ?', [id], (err) => {

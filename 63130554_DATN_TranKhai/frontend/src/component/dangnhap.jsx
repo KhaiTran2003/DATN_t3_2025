@@ -16,7 +16,6 @@ const DangNhap = () => {
     setThongBao('');
   
     try {
-      // Thử đăng nhập là học viên
       const resHV = await axios.post('http://localhost:5000/api/dangnhap', {
         tenDangNhap,
         matKhau
@@ -24,11 +23,10 @@ const DangNhap = () => {
   
       const { token, user } = resHV.data;
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user)); // ✅ key "user" cho học viên
+      localStorage.setItem('user', JSON.stringify(user)); 
       navigate('/');
     } catch (errHV) {
       try {
-        // Nếu không phải học viên, thử là giáo viên
         const resGV = await axios.post('http://localhost:5000/api/dangnhapgiaovien', {
           tenDangNhap,
           matKhau
@@ -36,7 +34,7 @@ const DangNhap = () => {
   
         const { token, user } = resGV.data;
         localStorage.setItem('token', token);
-        localStorage.setItem('userGV', JSON.stringify(user)); // ✅ key "userGV" cho giáo viên
+        localStorage.setItem('userGV', JSON.stringify(user));
         navigate('/giaovienquanly/dashboard');
       } catch (errGV) {
         setThongBao('Sai tài khoản hoặc mật khẩu');

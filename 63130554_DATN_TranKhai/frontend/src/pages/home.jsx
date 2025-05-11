@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../css/pages/Home.css';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../component/Navbar';
-
+import { Link } from 'react-router-dom';
 function Home() {
   const [khoaHoc, setKhoaHoc] = useState([]);
   const [giaoVien, setGiaoVien] = useState([]);
@@ -14,6 +14,7 @@ function Home() {
 
   const [courseSearchTerm, setCourseSearchTerm] = useState('');
   const [teacherSearchTerm, setTeacherSearchTerm] = useState('');
+  const firstMaKH = khoaHoc.length > 0 ? khoaHoc[0].maKH : null;
 
   const navigate = useNavigate();
 
@@ -49,7 +50,7 @@ function Home() {
           const res = await axios.get(`http://localhost:5000/api/gvkh/giaovien/${gv.maGV}`);
           temp[gv.maGV] = res.data;
         } catch (err) {
-          console.error('Lỗi lấy khóa học GV:', err);
+          console.error('Lỗi lấy khóa học của GV:', err);
           temp[gv.maGV] = [];
         }
       }
@@ -94,7 +95,14 @@ function Home() {
       <section className="hero" id="home">
         <h2>Nền tảng học tập hiện đại</h2>
         <p>Học mọi lúc, mọi nơi với các khóa học được thiết kế cá nhân hóa</p>
-        <button>Khám phá ngay</button>
+        <button
+          onClick={() => {
+            if (firstMaKH) navigate(`/danhgianangluc/${firstMaKH}`);
+            else alert('Chưa có khóa học để đánh giá');
+          }}
+        >
+          Đánh giá năng lực ngay
+        </button>
       </section>
 
       <section className="courses" id="khoahoc">
@@ -163,8 +171,7 @@ function Home() {
           <p>Đội ngũ giảng viên chuyên môn cao, truyền cảm hứng học tập hiệu quả.</p>
           <h4>Cá Nhân Hóa Với AI</h4>
           <p>Tự động đề xuất bài học phù hợp theo phong cách học tập của bạn.</p>
-          <h4>Kết Nối 24/7</h4>
-          <p>Diễn đàn, chat, livestream, hỏi đáp hỗ trợ học viên liên tục.</p>
+          
           <h4>Giáo Dục Số Tương Lai</h4>
           <p>Luôn cập nhật công nghệ, đồng hành cùng sự phát triển của bạn.</p>
         </article>

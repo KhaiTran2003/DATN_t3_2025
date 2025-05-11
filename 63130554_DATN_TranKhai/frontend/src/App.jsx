@@ -23,6 +23,10 @@ import ChiTietBaiHoc from './pages/ChiTietBaiHoc';
 import FinalResult from './pages/FinalResult';
 import XemTienTrinhHV from './giaovienquanly/tientrinh/XemTienTrinhHV';
 import ChiTietGiaoVien from './pages/ChiTietGiaoVien';
+import DanhGiaNangLuc from './pages/DanhGiaNangLuc';
+import KetQuaDanhGia from './pages/KetQuaDanhGia';
+import SuaBaiKiemTra from './giaovienquanly/baikiemtra/SuaBaiKiemTra';
+
 function App() {
   return (
     <Router>
@@ -44,7 +48,7 @@ function App() {
         <Route path="/giaovienquanly/baihoc/thembaihoc" element={<ThemBaiHoc />} />
         <Route path="/giaovienquanly/baihoc/suabaihoc/:id" element={<SuaBaiHoc />} />
         <Route path="/khoahoc/:maKH/baihoc/:maBH" element={<ChiTietBaiHoc />} />
-
+        <Route path="/giaovienquanly/baikiemtra/suabaikiemtra/:maCH" element={<SuaBaiKiemTra />} />
 
 
         <Route path="/giaovienquanly/baikiemtra/thembaikiemtra" element={<ThemBaiKiemTra />} />
@@ -64,6 +68,11 @@ function App() {
         <Route path="/dangnhap" element={<DangNhap />} />
         <Route path="/dangkyhocvien" element={<DangKy />} />
         <Route path="/dangkygiaovien" element={<DangKyGiaoVien />} />
+
+        <Route path="/danhgianangluc/:maKH" element={<DanhGiaNangLuc />} />
+        <Route path="/ket-qua-danh-gia" element={<KetQuaDanhGia />} />
+
+
         <Route path="*" element={<div className="p-6 text-red-500 font-semibold">404 - Không tìm thấy trang</div>} />
       </Routes>
     </Router>

@@ -1,0 +1,107 @@
+/* src/css/pages/KetQuaDanhGia.css */
+
+.kqdg-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 24px;
+    background-color: #fefefe;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .kqdg-back {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  
+  .kqdg-back:hover {
+    color: #007BFF;
+  }
+  
+  .kqdg-title {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 28px;
+    color: #333;
+  }
+  
+  /* Bảng chi tiết câu hỏi */
+  .kqdg-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  
+  .kqdg-table th,
+  .kqdg-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+  }
+  
+  .kqdg-correct {
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  .kqdg-wrong {
+    color: #dc3545;
+    font-weight: bold;
+  }
+  
+  /* Điểm số */
+  .kqdg-score {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 24px;
+    color: #333;
+  }
+  
+  /* Grid card gợi ý khóa học */
+  .kqdg-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  
+  .kqdg-card {
+    cursor: pointer;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .kqdg-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .kqdg-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+  
+  .kqdg-card-body {
+    padding: 12px;
+  }
+  
+  .kqdg-card-body h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .kqdg-card-body p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+  }
+  

@@ -57,18 +57,5 @@ router.post('/dangky', (req, res) => {
   );
 });
 
-// Hủy đăng ký
-router.delete('/huydangky', (req, res) => {
-  const { maHV, maKH } = req.body;
-
-  db.query(
-    'DELETE FROM dangky WHERE maHV = ? AND maKH = ?',
-    [maHV, maKH],
-    (err) => {
-      if (err) return res.status(500).json({ error: 'Không thể hủy đăng ký' });
-      res.json({ message: 'Hủy đăng ký thành công' });
-    }
-  );
-});
 
 module.exports = router;

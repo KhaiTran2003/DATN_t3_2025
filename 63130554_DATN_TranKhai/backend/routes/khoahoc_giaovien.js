@@ -30,7 +30,7 @@ router.get('/gvkh/khoahoc/:maKH', (req, res) => {
 router.get('/gvkh/giaovien/:maGV', (req, res) => {
   const { maGV } = req.params;
   db.query(
-    `SELECT kh.maKH, kh.tenKhoaHoc, kh.gia
+    `SELECT kh.maKH, kh.tenKhoaHoc, kh.gia, kh.level, kh.anhKhoaHoc
      FROM khoahoc_giaovien kgv
      JOIN khoahoc kh ON kgv.maKH = kh.maKH
      WHERE kgv.maGV = ?`,

@@ -43,6 +43,7 @@ const DSKhoaHoc = () => {
       (course.tenKhoaHoc && course.tenKhoaHoc.toLowerCase().includes(keyword)) ||
       (course.moTa && course.moTa.toLowerCase().includes(keyword)) ||
       (course.level && course.level.toString().toLowerCase().includes(keyword)) ||
+      (course.gia && course.gia.toString().toLowerCase().includes(keyword)) ||
       (course.chuanDauRa && course.chuanDauRa.toLowerCase().includes(keyword))
     );
     setKhoaHoc(filtered);

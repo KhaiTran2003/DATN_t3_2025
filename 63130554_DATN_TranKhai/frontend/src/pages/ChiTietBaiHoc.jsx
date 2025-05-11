@@ -10,25 +10,16 @@ const ChiTietBaiHoc = ({ maBaiHoc, onLamQuiz }) => {
   const token   = localStorage.getItem('token');
   const decoded = token ? jwtDecode(token) : null;
   const maHV    = decoded?.maHV;
-
-  /* =====================================================
-     Hàm chuyển URL YouTube sang dạng embed
-     ===================================================== */
   const convertToEmbedUrl = (url) => {
     if (!url) return '';
     const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
     return match ? `https://www.youtube.com/embed/${match[1]}` : url;
   };
 
-  /* =====================================================
-     Hàm định dạng mm:ss
-     ===================================================== */
   const formatTime = (sec) =>
     `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
 
-  /* =====================================================
-     🔥 Hàm đánh dấu hoàn thành bài học
-     ===================================================== */
+
   const finishedLesson = () => {
     axios
       .post('http://localhost:5000/api/themtientrinh', {
@@ -36,7 +27,6 @@ const ChiTietBaiHoc = ({ maBaiHoc, onLamQuiz }) => {
         mabh: maBaiHoc,
       })
       .then(() => {
-        // Phát sự kiện cho ChuDe.jsx biết để unlock bài kế tiếp
         window.dispatchEvent(
           new CustomEvent('lessonFinished', { detail: maBaiHoc })
         );
@@ -44,25 +34,19 @@ const ChiTietBaiHoc = ({ maBaiHoc, onLamQuiz }) => {
       .catch((err) => console.error('Lỗi thêm tiến trình:', err));
   };
 
-  /* =====================================================
-     Kiểm tra tiến trình trước khi làm quiz
-     ===================================================== */
   const checkTienTrinh = async () => {
     try {
       const res = await axios.post(
         'http://localhost:5000/api/checkTienTrinh',
         { maHV, maBH: maBaiHoc },
       );
-      return res.data; // { allowQuiz, message }
+      return res.data; 
     } catch (err) {
       console.error('Lỗi check tiến trình:', err);
       return { allowQuiz: false, message: 'Lỗi server, vui lòng thử lại sau.' };
     }
   };
 
-  /* =====================================================
-     Lấy nội dung bài học
-     ===================================================== */
   useEffect(() => {
     if (!maBaiHoc) return;
 
@@ -72,20 +56,17 @@ const ChiTietBaiHoc = ({ maBaiHoc, onLamQuiz }) => {
       .catch((err) => console.error('Lỗi tải nội dung bài học:', err));
   }, [maBaiHoc]);
 
-  /* =====================================================
-     Đếm ngược – khi về 0 sẽ gọi finishedLesson()
-     ===================================================== */
   useEffect(() => {
     if (!baiHoc) return;
 
-    const totalSec = baiHoc.thoiGian * 60; // thoiGian lưu phút
+    const totalSec = baiHoc.thoiGian * 60; 
     setRemainingTime(totalSec);
 
     const interval = setInterval(() => {
       setRemainingTime((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          finishedLesson();           // ✅ tự đánh dấu hoàn thành
+          finishedLesson();          
           return 0;
         }
         return prev - 1;
@@ -97,9 +78,6 @@ const ChiTietBaiHoc = ({ maBaiHoc, onLamQuiz }) => {
 
   if (!baiHoc) return <p>Đang tải nội dung bài học...</p>;
 
-  /* =====================================================
-     Giao diện
-     ===================================================== */
   return (
     <div style={{ padding: 10 }}>
       <h2>{baiHoc.tenBaiHoc}</h2>

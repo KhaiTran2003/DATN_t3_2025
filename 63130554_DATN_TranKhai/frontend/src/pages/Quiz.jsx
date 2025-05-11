@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../css/pages/Quiz.css';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
   const { maBH: maBHFromUrl } = useParams();
@@ -20,7 +20,6 @@ const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
   const [submitted, setSubmitted] = useState(false);
   const [attempts, setAttempts] = useState(1);
 
-  // Ref để lưu thời gian bắt đầu
   const startTimeRef = useRef(null);
 
   useEffect(() => {
@@ -28,7 +27,6 @@ const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
       setLoading(false);
       return;
     }
-    // Đánh dấu thời gian bắt đầu
     startTimeRef.current = Date.now();
 
     setLoading(true);
@@ -58,10 +56,9 @@ const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
   }, [maBH]);
 
   const handleSubmit = () => {
-    // Tính điểm
     let computedScore = 0;
     questions.forEach(q => {
-      const correct = answers.find(a => a.maCH === q.maCH && a.dungSai === 0);
+      const correct = answers.find(a => a.maCH === q.maCH && a.dungSai === 1);
       if (correct && userAns[q.maCH] === correct.maDA) {
         computedScore++;
       }
@@ -69,23 +66,20 @@ const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
     setScore(computedScore);
     setSubmitted(true);
 
-    // Tính thời gian làm bài thực tế (s) và chuyển sang phút, làm tròn lên
     const endTime = Date.now();
     const timeSpentSec = Math.round((endTime - startTimeRef.current) / 1000);
     const timeSpentMin = Math.ceil(timeSpentSec / 60);
 
-    // Chuẩn bị payload
     const payload = {
       mahv: maHV,
       mabh: maBH,
       diem: computedScore
     };
-    // Chỉ thêm thoiGianMin (quiz time) khi đạt full điểm
+
     if (computedScore === questions.length) {
       payload.thoiGianMin = timeSpentMin;
     }
 
-    // Ghi kết quả lên server
     axios.post('http://localhost:5000/api/result', payload)
       .then(res => console.log('Result recorded', res.data))
       .catch(err => console.error('Lỗi ghi result:', err));
@@ -96,7 +90,6 @@ const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
     setUserAns({});
     setScore(null);
     setSubmitted(false);
-    // Reset thời gian bắt đầu
     startTimeRef.current = Date.now();
   };
 
@@ -123,13 +116,15 @@ const Quiz = ({ maBH: maBaiHocFromProps, onNextLesson, isFinalLesson }) => {
           <div className="quiz-answer">
             {answers.filter(a => a.maCH === q.maCH).map(a => {
               const checked = userAns[q.maCH] === a.maDA;
-              const correct = a.dungSai === 0;
               return (
                 <label
                   key={a.maDA}
                   className={
                     submitted
-                      ? (correct ? 'correct' : (checked ? 'wrong' : ''))
+                      ? (a.dungSai === 1
+                          ? 'correct'
+                          : (checked ? 'wrong' : '')
+                        )
                       : ''
                   }
                 >

@@ -1,64 +1,95 @@
+/* src/css/pages/ChiTietGiaoVien.css */
 .gv-detail-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    font-family: 'Segoe UI', sans-serif;
-    color: #1f2937;
-  }
-  
-  .back-btn {
-    margin-bottom: 1rem;
-    background: none;
-    border: none;
-    color: #2563eb;
-    font-weight: 500;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
-  .gv-profile {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    background-color: #f3f4f6;
-    padding: 1rem;
-    border-radius: 8px;
-  }
-  
-  .gv-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 3px solid #2563eb;
-  }
-  
-  .gv-info h2 {
-    margin-bottom: 0.5rem;
-  }
-  
-  .gv-courses {
-    margin-top: 2rem;
-    background-color: #fefefe;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-  
-  .gv-courses ul {
-    margin: 0;
-    padding-left: 1.25rem;
-  }
-  
-  .course-item {
-    margin-bottom: 0.5rem;
-  }
-  .clickable {
-    cursor: pointer;
-    transition: color 0.2s ease;
-  }
-  
-  .clickable:hover {
-    color: #2563eb;
-  }
-    
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  color: #1f2937;
+}
+
+.back-btn {
+  margin-bottom: 1rem;
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+.gv-profile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: #f3f4f6;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.gv-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 3px solid #2563eb;
+}
+
+.gv-info h2 {
+  margin-bottom: 0.5rem;
+}
+
+/* Card grid for courses */
+.gv-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 1rem;
+}
+
+.gv-card {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gv-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.gv-card-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.gv-card-body {
+  padding: 12px;
+}
+
+.gv-card-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.gv-card-price {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clickable:hover {
+  color: #2563eb;
+}

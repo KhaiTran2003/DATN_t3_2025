@@ -39,7 +39,8 @@ app.use('/api', gvkhRouter);
 const tientrinhRouter = require('./routes/tientrinh');
 app.use('/api', tientrinhRouter);
 
-
+const danhGiaRouter = require('./routes/danhgianangluc');
+app.use('/api/danhgianangluc', danhGiaRouter);
 
 // Start server
 app.listen(PORT, () => {

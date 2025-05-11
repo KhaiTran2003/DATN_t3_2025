@@ -17,6 +17,39 @@ const storage = multer.diskStorage({
   }  
 });
 const upload = multer({ storage });
+
+
+// Trả về level và suggestion dựa trên level
+router.get('/khoahoc/level/:maKH', (req, res) => {
+  const { maKH } = req.params;
+  const sql = 'SELECT level FROM khoahoc WHERE maKH = ? LIMIT 1';
+  db.query(sql, [maKH], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!results.length) return res.status(404).json({ error: 'Không tìm thấy khóa học' });
+
+    const level = results[0].level;
+    let suggestion;
+    switch (level) {
+      case 'Cơ bản':
+        suggestion = 'Đây là khóa Cơ bản — bạn nên nắm chắc lý thuyết trước khi đi sâu.';
+        break;
+      case 'Trung cấp':
+      case 'Cơ bản - Trung cấp':
+        suggestion = 'Khóa Trung cấp – bạn đã có nền, giờ nên tập trung thực hành thêm.';
+        break;
+      case 'Trung cấp - Nâng cao':
+        suggestion = 'Khóa Trung cấp-Nâng cao – bạn đã sẵn sàng cho các bài tập nâng cao.';
+        break;
+      case 'Nâng cao':
+        suggestion = 'Khóa Nâng cao – thử thách bản thân với dự án thực tế và case study.';
+        break;
+      default:
+        suggestion = 'Hãy khám phá lộ trình phù hợp với bạn!';
+    }
+
+    res.json({ level, suggestion });
+  });
+});
 // API lấy danh sách khoá học
 router.get('/danhsachkhoahoc', (req, res) => {
   db.query('SELECT * FROM khoahoc', (err, results) => {
@@ -26,15 +59,7 @@ router.get('/danhsachkhoahoc', (req, res) => {
 });
 router.get('/thongtinkhoahocfull', (req, res) => {
   const sql = `
-    SELECT
-      kh.maKH,
-      kh.tenKhoaHoc,
-      kh.moTa,
-      kh.anhKhoaHoc,
-      kh.level,
-      kh.gia,
-      ls.soLuongBaiHoc,
-      ls.tongThoiGian
+    SELECT kh.maKH, kh.tenKhoaHoc,kh.moTa,kh.anhKhoaHoc,kh.level,kh.gia,ls.soLuongBaiHoc,ls.tongThoiGian
     FROM khoahoc kh
     LEFT JOIN (
       SELECT

@@ -100,9 +100,10 @@ const BaiKiemTra = () => {
                 <input
                   type="radio"
                   name={`cauhoi-${row.maCH}`}
-                  checked={!da.dungsai}
+                  checked={da.dungSai === 1}
                   disabled
-                />{' '}
+                />
+                {' '}
                 {String.fromCharCode(65 + idx)}. {da.dapAn}
               </label>
             </li>
@@ -115,7 +116,10 @@ const BaiKiemTra = () => {
       key: 'actions',
       render: (_, row) => (
         <div className="action-buttons">
-          <button className="btn edit" onClick={() => handleEdit(row.maCH)}>
+          <button
+            onClick={() => navigate(`/giaovienquanly/baikiemtra/suabaikiemtra/${row.maCH}`)}
+            className="btn edit"
+          >
             ✏️ Sửa
           </button>
           <button className="btn delete" onClick={() => handleDelete(row.maCH)}>

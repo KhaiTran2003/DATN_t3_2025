@@ -1,63 +1,65 @@
+// routes/tientrinh.js
 const express = require('express');
 const router = express.Router();
 const db = require('../database'); // Kết nối CSDL đã cấu hình
 
-// routes/tientrinh.js
-router.get(
-  '/danhsachtientrinh/:maHV/:maKH',
-  (req, res) => {
-    const { maHV, maKH } = req.params;
-    const sql = `
-      SELECT bh.maBH, bh.tenBaiHoc,
-             t.tinhTrang, t.soLanLamKT,
-             t.thoiGianLamBai, t.thoiGianMin, t.diemToiDa
-      FROM chude cd
-      JOIN baihoc bh ON cd.maCD = bh.maCD
-      LEFT JOIN tientrinh t
-        ON bh.maBH = t.maBH AND t.maHV = ?
-      WHERE cd.maKH = ?
-      ORDER BY bh.STT
-    `;
-    db.query(sql, [maHV, maKH], (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json(rows);
-    });
-  }
-);
+// 1) Lấy tiến trình theo học viên và khóa học
+router.get('/danhsachtientrinh/:maHV/:maKH', (req, res) => {
+  const { maHV, maKH } = req.params;
+  const sql = `
+    SELECT bh.maBH,
+           bh.tenBaiHoc,
+           t.tinhTrang,
+           t.soLanLamKT,
+           t.thoiGianMin,
+           t.diemToiDa
+    FROM chude cd
+    JOIN baihoc bh ON cd.maCD = bh.maCD
+    LEFT JOIN tientrinh t
+      ON bh.maBH = t.maBH AND t.maHV = ?
+    WHERE cd.maKH = ?
+    ORDER BY bh.STT
+  `;
+  db.query(sql, [maHV, maKH], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
 
-
-router.post('/baihoc/tinhtrang',(req,res)=>{
-  const data = req.body;
+// 2) Lấy tình trạng bài học theo chủ đề
+router.post('/baihoc/tinhtrang', (req, res) => {
+  const { maHV, maCD } = req.body;
   const query = `
-    SELECT bh.*, t.tinhTrang
+    SELECT bh.*,
+           t.tinhTrang
     FROM baihoc bh
-    LEFT JOIN tientrinh t ON bh.maBH = t.maBH AND t.maHV = ?
+    LEFT JOIN tientrinh t
+      ON bh.maBH = t.maBH
+     AND t.maHV = ?
     WHERE bh.maCD = ?
   `;
-  db.query(query, [data.maHV,data.maCD], (err, results) => {
+  db.query(query, [maHV, maCD], (err, results) => {
     if (err) {
-      return res.status(500).json({ error: 'Lỗi khi lấy danh sách bài học theo mã khóa học' });
+      return res.status(500).json({ error: 'Lỗi khi lấy danh sách bài học theo mã chủ đề' });
     }
     res.json(results);
   });
 });
 
-router.post("/result", (req, res) => {
-  // 1. Destructure và ép kiểu nếu cần
-  const { mahv, mabh, thoigianlambai, diem } = req.body;
-  console.log({ mahv, mabh, thoigianlambai, diem }); 
-  // => kiểm tra xem body có đúng giá trị bạn mong muốn không
+// 3) Cập nhật kết quả quiz (bỏ hoàn toàn thoiGianLamBai)
+router.post('/result', (req, res) => {
+  const { mahv, mabh, thoiGianMin, diem } = req.body;
+  // kiểm tra param
+  console.log({ mahv, mabh, thoiGianMin, diem });
 
-  // 2. Câu SQL với EXACTLY 4 dấu ? tương ứng 4 biến
   const sql = `
     INSERT INTO tientrinh
-      (maHV, maBH,   tinhTrang,thoiGianLamBai, soLanLamKT, thoiGianMin, diemToiDa)
+      (maHV, maBH, tinhTrang, soLanLamKT, thoiGianMin, diemToiDa)
     VALUES
-      (?,     ?,    "dang hoc",         1,        1,  ?,            ?)
+      (?, ?, 'dang hoc', 1, ?, ?)
     ON DUPLICATE KEY UPDATE
       tinhTrang  = 'hoan thanh',
       soLanLamKT  = soLanLamKT + 1,
-      -- so sánh với giá trị MỚI vừa được INSERT:
       diemToiDa   = IF(VALUES(diemToiDa) > diemToiDa,
                        VALUES(diemToiDa),
                        diemToiDa),
@@ -65,25 +67,18 @@ router.post("/result", (req, res) => {
                        VALUES(thoiGianMin),
                        thoiGianMin);
   `;
-
-  // 3. Mảng params đúng thứ tự:
-  //    [maHV, maBH, thoiGianLamBai (lần đầu & min), diemToiDa]
   const params = [
-    mahv,               // 1st ?
-    mabh,               // 2nd ?
-    thoigianlambai,     // 3rd ?: thoiGianMin
-    diem                // 4th ?: diemToiDa
+    mahv,      // maHV
+    mabh,      // maBH
+    thoiGianMin,
+    diem
   ];
 
-  // 4. Thực thi
   db.query(sql, params, (err, result) => {
     if (err) {
       console.error("DB error:", err);
-      return res
-        .status(500)
-        .json({ error: "Lỗi khi cập nhật tiến trình." });
+      return res.status(500).json({ error: "Lỗi khi cập nhật tiến trình." });
     }
-
     res.json({
       success: true,
       message: result.affectedRows
@@ -92,26 +87,29 @@ router.post("/result", (req, res) => {
     });
   });
 });
-//insert 1 dòng vào bảng tientrinh
-router.post('/themtientrinh',(req,res)=>{
-  const data = req.body;
+
+// 4) Thêm mới tiến trình (ban đầu, không đưa vào thoiGianLamBai)
+router.post('/themtientrinh', (req, res) => {
+  const { mahv, mabh } = req.body;
   const query = `
-   INSERT INTO tientrinh (maHV, maBH, tinhTrang, thoiGianLamBai, soLanLamKT, thoiGianMin, diemToiDa)
-   VALUES (?,?,"dang hoc",0,0,0,0)
+    INSERT INTO tientrinh
+      (maHV, maBH, tinhTrang, soLanLamKT, thoiGianMin, diemToiDa)
+    VALUES
+      (?, ?, 'dang hoc', 0, 0, 0)
   `;
-  
-  db.query(query, [data.mahv,data.mabh], (err, results) => {
+  db.query(query, [mahv, mabh], (err, results) => {
     if (err) {
-      if(err.code==="ER_DUP_ENTRY"){
-        return res.status(200).json({message: "Đã học rồi"})
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(200).json({ message: "Đã học rồi" });
       }
-      console.log(err)
-      return res.status(500).json({ error: 'Lỗi khi lấy danh sách bài học theo mã khóa học' });
+      console.error(err);
+      return res.status(500).json({ error: 'Lỗi khi thêm tiến trình' });
     }
     res.json(results);
   });
 });
 
+// 5) Kiểm tra tiến trình trước khi làm quiz
 router.post('/checkTienTrinh', (req, res) => {
   const { maHV, maBH } = req.body;
   if (!maHV || !maBH) {
@@ -120,7 +118,6 @@ router.post('/checkTienTrinh', (req, res) => {
       message: 'Thiếu maHV hoặc maBH'
     });
   }
-
   const sql = `
     SELECT tinhTrang
     FROM tientrinh
@@ -135,49 +132,30 @@ router.post('/checkTienTrinh', (req, res) => {
         message: 'Lỗi khi kiểm tra tiến trình'
       });
     }
-
     if (results.length === 0) {
-      // Chưa xem lý thuyết
       return res.json({
         allowQuiz: false,
         message: 'Chưa học lý thuyết'
       });
     }
-
     const status = results[0].tinhTrang;
-    if (status === 'dang hoc') {
-      // Đã xem lý thuyết, cho phép làm quiz
-      return res.json({
-        allowQuiz: true,
-        message: 'Đã học lý thuyết, cho phép làm bài kiểm tra'
-      });
-    }
-
-    if (status === 'hoan thanh') {
-      // Đã hoàn thành quiz trước đó, vẫn cho phép làm lại
-      return res.json({
-        allowQuiz: true,
-        message: 'Bạn đã hoàn thành quiz, có thể làm lại nếu muốn'
-      });
-    }
-
-    // Trạng thái khác không mong đợi
     return res.json({
-      allowQuiz: false,
-      message: `Trạng thái không hợp lệ (${status})`
+      allowQuiz: true,
+      message: status === 'dang hoc'
+        ? 'Đã học lý thuyết, cho phép làm bài kiểm tra'
+        : 'Bạn đã hoàn thành quiz, có thể làm lại nếu muốn'
     });
   });
 });
-// src/routes/progress.js
+// Lấy toàn bộ tiến trình (bảng tổng quan)
 router.get('/danhsachtientrinh', (req, res) => {
   const sql = `
     SELECT
       t.maHV,
       t.maBH,
-      hv.hoVaTen      AS tenHV,      -- đúng cột hoVaTen
-      bh.tenBaiHoc    AS tenBH,
+      hv.hoVaTen   AS tenHV,
+      bh.tenBaiHoc AS tenBH,
       t.tinhTrang,
-      t.thoiGianLamBai,
       t.soLanLamKT,
       t.thoiGianMin,
       t.diemToiDa
@@ -195,10 +173,7 @@ router.get('/danhsachtientrinh', (req, res) => {
   });
 });
 
-/**
- * DELETE /api/xoatientrinh/:maHV/:maBH
- * Xóa tiến trình dựa trên hai khóa chính maHV và maBH
- */
+// Xóa tiến trình theo khoá chính
 router.delete('/xoatientrinh/:maHV/:maBH', (req, res) => {
   const { maHV, maBH } = req.params;
   const sql = `
@@ -216,6 +191,5 @@ router.delete('/xoatientrinh/:maHV/:maBH', (req, res) => {
     res.json({ success: true, message: 'Xóa tiến trình thành công' });
   });
 });
-
 
 module.exports = router;

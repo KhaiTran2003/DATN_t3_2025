@@ -67,17 +67,18 @@ router.post('/themcauhoi', (req, res) => {
 
 // PUT: Sửa câu hỏi
 router.put('/suacauhoi/:id', (req, res) => {
-  const { maBH, cauHoi } = req.body;
+  const { cauHoi } = req.body;  // Sửa lại để chỉ lấy `cauHoi`
   const { id } = req.params;
   db.query(
-    'UPDATE cauhoi SET maBH = ?, cauHoi = ? WHERE maCH = ?',
-    [maBH, cauHoi, id],
+    'UPDATE cauhoi SET cauHoi = ? WHERE maCH = ?',
+    [cauHoi, id],
     (err) => {
       if (err) return res.status(500).json({ error: 'Không thể cập nhật câu hỏi' });
       res.json({ message: 'Cập nhật thành công' });
     }
   );
 });
+
 
 // DELETE: Xoá câu hỏi
 router.delete('/xoacauhoi/:id', (req, res) => {
