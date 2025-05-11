@@ -1,42 +1,98 @@
 /* DangKy.css */
 
+/* Container bao quanh form */
+.dangky-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Đảm bảo container chiếm toàn bộ chiều cao của viewport */
+  background-color: #111827; /* Màu nền xanh đen */
+  padding: 0 20px; /* Đảm bảo không có khoảng trống 2 bên */
+}
+
+/* Content */
 .form-container-dangky {
-    padding: 1.5rem;
-    max-width: 28rem;
-    margin: 0 auto;
-    background-color: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-title-dangky {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  
-  .form-message-dangky {
-    color: #16a34a; /* text-green-600 */
-    font-weight: 600;
-  }
-  
-  .form-input-dangky {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-  }
-  
-  .form-button-dangky {
-    background-color: #3b82f6;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    transition: background-color 0.2s;
-    cursor: pointer;
-  }
-  
-  .form-button-dangky:hover {
-    background-color: #2563eb;
-  }
-  
+  background-color: #1f2937; /* Nền tối */
+  width: 100%;
+  max-width: 450px; /* Giới hạn chiều rộng của form */
+  padding: 40px;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tiêu đề */
+.form-title-dangky {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Message thông báo */
+.form-message-dangky {
+  color: #16a34a; /* text-green-600 */
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Các trường input */
+.form-input-dangky {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background-color: transparent;
+  color: white;
+  font-size: 16px;
+}
+
+.form-input-dangky:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Nút đăng ký */
+.form-button-dangky {
+  width: 100%;
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-button-dangky:hover {
+  background-color: #2563eb;
+}
+
+/* Liên kết */
+.form-links {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-links a {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.form-links a:hover {
+  text-decoration: underline;
+}
+
+/* Lỗi */
+.form-error {
+  color: #f87171;
+  text-align: center;
+  margin-bottom: 15px;
+}

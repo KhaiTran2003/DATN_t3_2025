@@ -229,9 +229,14 @@ function Home() {
         </div>
       </section>
 
-      <footer className="footer">
-        &copy; 2025 LCMS. All rights reserved.
-      </footer>
+     <footer className="footer">
+  <div className="footer-content">
+    <p>Sản phẩm của Trần Khải</p>
+    <p>Đại học Nha Trang</p>
+    <p>Số điện thoại: <a href="tel:+84855542974">0855542974</a></p>
+  </div>
+</footer>
+
     </div>
   );
 }
